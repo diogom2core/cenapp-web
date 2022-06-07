@@ -55,7 +55,7 @@ function AdminLogin() {
                 />
               </InputField>
 
-              <Button width={340} type="submit">
+              <Button width={340} type="submit" color="#40d4c3">
                 Entrar
               </Button>
               <Link to="/passwords/forgot">Esqueci minha senha</Link>

@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  MdCallMissedOutgoing,
-  MdCreditCard,
-  MdDashboard,
-  MdPeople,
-  MdViewList,
-  MdWidgets,
-} from 'react-icons/md';
+import { MdCalendarToday, MdPeople } from 'react-icons/md';
 import { Link, useLocation } from 'react-router-dom';
 
 import { Container, ModuleItens } from './styles';
@@ -18,45 +11,19 @@ function Sidebar() {
     <Container>
       <ModuleItens>
         <ul>
-          <ModuleItens.Item active={pathname === '/'}>
-            <Link to="/analyst/list">
-              <MdDashboard size={22} color="#111" />
-              <span>Analistas</span>
+          <ModuleItens.Item
+            active={pathname === '/' || pathname === '/agendamentos'}
+          >
+            <Link to="/agendamentos">
+              <MdCalendarToday size={22} color="#111" />
+              <span>Solicitações</span>
             </Link>
           </ModuleItens.Item>
 
-          <ModuleItens.Item active={pathname === '/usuarios'}>
-            <Link to="/usuarios">
+          <ModuleItens.Item active={pathname === '/analistas'}>
+            <Link to="/analistas">
               <MdPeople size={22} color="#111" />
-              <span>Usuários</span>
-            </Link>
-          </ModuleItens.Item>
-
-          <ModuleItens.Item active={pathname === '/categorias'}>
-            <Link to="/categorias">
-              <MdViewList size={22} color="#111" />
-              <span>Categorias</span>
-            </Link>
-          </ModuleItens.Item>
-
-          <ModuleItens.Item active={pathname === '/administrativo'}>
-            <Link to="/administrativo">
-              <MdWidgets size={22} color="#111" />
-              <span>Administrativo</span>
-            </Link>
-          </ModuleItens.Item>
-
-          <ModuleItens.Item active={pathname === '/anucio'}>
-            <Link to="/">
-              <MdCallMissedOutgoing size={22} color="#111" />
-              <span>Anúcios </span>
-            </Link>
-          </ModuleItens.Item>
-
-          <ModuleItens.Item active={pathname === '/cartoes'}>
-            <Link to="/cartoes">
-              <MdCreditCard size={22} color="#111" />
-              <span>QR Cartão </span>
+              <span>Analistas</span>
             </Link>
           </ModuleItens.Item>
         </ul>

@@ -2,191 +2,134 @@
 /* eslint-disable jsx-a11y/label-has-for */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useEffect, useState } from 'react';
-import { Field, Formik } from 'formik';
-import { Select, Switch } from 'antd';
+import React, { useState } from 'react';
+import { Field, Form, Formik } from 'formik';
+import { Row, Select } from 'antd';
 
 import { toast } from 'react-toastify';
 import { useHistory } from 'react-router-dom';
-import { Container, BoxEdit } from './styles';
+import { Container, BoxEdit, Column } from './styles';
 import api from '../../services/api';
 
 const { Option } = Select;
-function UserCreate() {
+function AnalystCreate() {
   const [initialValues] = useState({
     name: '',
     email: '',
-    nickname: '',
-    phone_number: '',
-    observation: '',
-    category: '',
-    birthday: '',
-    gender: '',
-    password: '',
   });
-  const [category, setCategory] = useState('');
-  const [categories, setCategories] = useState([]);
-  const [isCompany, setIsCompany] = useState(false);
+
+  const [shift, setShift] = useState('');
+  const [district, setDistrict] = useState('');
+  const [modality, setModality] = useState('');
+  const [sex, setSex] = useState('');
+
   const history = useHistory();
-  async function loadCategories() {
-    const response = await api.get('/categories');
-    setCategories(response.data);
-  }
 
-  useEffect(() => {
-    loadCategories();
-  }, []);
-
-  async function createUser(values) {
+  async function createAnalyst(values) {
     try {
-      const {
+      const { name, email } = values;
+
+      await api.post('/admin/analyst', {
         name,
         email,
-        nickname,
-        phone_number,
-        observation,
-        birthday,
-        gender,
-        password,
-      } = values;
-      await api.post('/dashboard/users', {
-        name,
-        email,
-        nickname,
-        phone_number,
-        is_company: isCompany,
-        category,
-        observation,
-        birthday,
-        gender,
-        password,
+        shift,
+        district,
+        sex,
+        service_modality: modality,
       });
 
-      toast.success('Usuário cadastrado com sucesso!');
+      toast.success('Analista cadastrado com sucesso!');
       history.goBack();
     } catch (err) {
       const { message } = JSON.parse(err.request.responseText);
       toast.error(`Error ao cadastrar:  ${message}`);
     }
   }
-  function handleCategoryChange(categoryName) {
-    setCategory(categoryName);
-  }
 
   return (
     <Container>
-      <h2>Criação de Usuário</h2>
+      <h2>Criação de Analista</h2>
       <BoxEdit>
-        <Formik initialValues={initialValues} onSubmit={createUser}>
-          {({ handleSubmit, handleChange, handleBlur, values }) => (
-            <form onSubmit={handleSubmit}>
-              <div className="line">
-                <div>
-                  <label>Nome</label>
-                  <input
-                    type="text"
-                    name="name"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.name}
-                    placeholder="Nome"
-                  />
-                </div>
+        <Formik initialValues={initialValues} onSubmit={createAnalyst}>
+          {() => (
+            <Form>
+              <Row>
+                <Column>
+                  <label htmlFor="name">Nome</label>
+                  <Field id="name" name="name" placeholder="Nome" />
+                </Column>
 
-                <div>
-                  <label>E-mail</label>
-                  <input
-                    type="text"
-                    name="email"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.email}
-                    placeholder="E-mail"
-                  />
-                </div>
+                <Column>
+                  <label htmlFor="email">E-mail</label>
+                  <Field id="email" name="email" placeholder="E-mail" />
+                </Column>
 
-                <div>
-                  <label>Nickname</label>
-                  <input
-                    type="text"
-                    name="nickname"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.nickname}
-                    placeholder="Nickname"
-                  />
-                </div>
-              </div>
+                <Column>
+                  <label htmlFor="period">Turno</label>
 
-              <div className="line">
-                <div>
-                  <label>Telefone</label>
-                  <Field
-                    type="text"
-                    name="phone_number"
-                    placeholder="Telefone"
-                  />
-                </div>
-
-                <div>
-                  <label>Categoria</label>
                   <Select
-                    defaultValue={initialValues.category || 'Sem categoria'}
-                    style={{ width: 222 }}
-                    onChange={handleCategoryChange}
+                    id="shift"
+                    defaultValue="Selecione o periodo"
+                    style={{ width: 205 }}
+                    onChange={(shiftValue) => setShift(shiftValue)}
                   >
-                    {categories.map((categoryName) => (
-                      <Option key={categoryName.name}>
-                        {categoryName.name}
-                      </Option>
-                    ))}
+                    <Option key="manha">Manhã</Option>
+                    <Option key="tarde">Tarde</Option>
+                    <Option key="noite">Noite</Option>
                   </Select>
-                </div>
+                </Column>
+              </Row>
 
-                <div>
-                  <label> Empresa </label>
-                  <Switch
-                    defaultChecked={isCompany}
-                    checked={isCompany}
-                    onChange={() => setIsCompany(!isCompany)}
-                  />
-                </div>
-              </div>
+              <Row>
+                <Column>
+                  <label htmlFor="district">Bairro</label>
 
-              <div className="line">
-                <div>
-                  <label>Data de Nascimento</label>
-                  <Field type="text" name="birthday" placeholder="00/00/0000" />
-                </div>
+                  <Select
+                    id="district"
+                    defaultValue="Selecione o bairro"
+                    style={{ width: 205 }}
+                    onChange={(valueDistrict) => setDistrict(valueDistrict)}
+                  >
+                    <Option key="barro_01">Bairro 01</Option>
+                    <Option key="barro_02">Bairro 02</Option>
+                    <Option key="barro_03">Bairro 03</Option>
+                  </Select>
+                </Column>
 
-                <div>
-                  <label>Gênero</label>
-                  <Field type="text" name="gender" placeholder="M, F ou O" />
-                </div>
+                <Column>
+                  <label htmlFor="modality">Modalidade de Atendimento</label>
+                  <Select
+                    id="modality"
+                    defaultValue="Modalidade de atendimento"
+                    style={{ width: 205 }}
+                    onChange={(valueModality) => setModality(valueModality)}
+                  >
+                    <Option key="online">Online</Option>
+                    <Option key="presencial">Presencial</Option>
+                    <Option key="hibrido">Hibrido</Option>
+                  </Select>
+                </Column>
 
-                <div>
-                  <label>Senha</label>
-                  <Field type="text" name="password" placeholder="*******" />
-                </div>
-              </div>
-
-              <div className="line">
-                <div className="col12">
-                  <label>Observação</label>
-                  <Field name="observation">
-                    {({ field }) => (
-                      <div>
-                        <textarea {...field} value={field.value || ''} />
-                      </div>
-                    )}
-                  </Field>
-                </div>
-              </div>
+                <Column>
+                  <label htmlFor="sex">Sexo do Analísta</label>
+                  <Select
+                    id="sex"
+                    defaultValue="Sexo do analista"
+                    style={{ width: 205 }}
+                    onChange={(sexValue) => setSex(sexValue)}
+                  >
+                    <Option key="m">Masculino</Option>
+                    <Option key="f">Feminino</Option>
+                  </Select>
+                </Column>
+              </Row>
 
               <div className="button-box">
-                <button type="submit">Cadastrar</button>
+                <button width={340} type="submit" loading={false}>
+                  Cadastrar
+                </button>
               </div>
-            </form>
+            </Form>
           )}
         </Formik>
       </BoxEdit>
@@ -194,4 +137,4 @@ function UserCreate() {
   );
 }
 
-export default UserCreate;
+export default AnalystCreate;

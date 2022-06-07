@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/jsx-one-expression-per-line */
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import api from '../../services/api';
-import { Container, Table, Form, Pagination } from './styles';
+import { Container, Table, Form, Pagination, Title } from './styles';
 
 function AnalystList() {
   const [analysts, setAnalysts] = useState([]);
@@ -31,7 +32,7 @@ function AnalystList() {
     });
   }, [page]);
 
-  async function searchUser() {
+  async function searchAnalyst() {
     setIsLoading(true);
     const response = await api.get(`/admin/analyst?search=${searchWord}`);
     setAnalysts(response.data);
@@ -47,7 +48,10 @@ function AnalystList() {
 
   return (
     <Container>
-      <h2>Analistas</h2>
+      <Title>
+        <h2>Analistas</h2>
+        <Link to="/analistas/cadastro">Cadastrar</Link>
+      </Title>
 
       {!isLoading && (
       <>
@@ -57,10 +61,10 @@ function AnalystList() {
             value={searchWord}
             placeholder="buscar usuário"
             onChange={event => changeWordSearch(event.target.value)}
-            onKeyDown={event => event.key === 'Enter' && searchUser()}
+            onKeyDown={event => event.key === 'Enter' && searchAnalyst()}
           />
 
-          <button type="button" onClick={searchUser}>
+          <button type="button" onClick={searchAnalyst}>
             Buscar
           </button>
         </Form>

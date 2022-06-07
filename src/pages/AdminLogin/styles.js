@@ -64,7 +64,7 @@ export const Content = styled.div`
     margin: 20px auto 0 auto;
     background: none;
     border: none;
-    color: #ff9000;
+    color: #40d4c3;
     text-decoration: none;
     &:hover {
       text-decoration: underline;

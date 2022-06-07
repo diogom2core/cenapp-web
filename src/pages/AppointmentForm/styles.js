@@ -50,7 +50,7 @@ export const Content = styled.div`
       background: none;
       border: none;
       color: #fff;
-      background: #ff9000;
+      background: #40d4c3;
       text-decoration: none;
     }
   }
@@ -92,5 +92,24 @@ export const Column = styled.div`
     border-radius: 4px;
     padding: 12px;
     font-size: 14px;
+  }
+`;
+
+export const AppoitmentFinish = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  img {
+    width: 150px;
+  }
+
+  h3 {
+    margin-top: 20px;
+    margin-bottom: 30px;
+  }
+
+  p {
+    max-width: 400px;
   }
 `;

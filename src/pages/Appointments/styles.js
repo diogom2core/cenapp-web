@@ -16,6 +16,19 @@ export const Container = styled.div`
   }
 `;
 
+export const Title = styled.div`
+  display: flex;
+  align-items: center;
+
+  h1 {
+    margin: 0;
+  }
+
+  a {
+    margin-left: 20px;
+  }
+`;
+
 export const Form = styled.div`
   margin-top: 70px;
   display: flex;

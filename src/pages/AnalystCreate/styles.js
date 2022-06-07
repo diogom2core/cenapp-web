@@ -10,7 +10,7 @@ export const Container = styled.div`
   padding-bottom: 120px;
 
   h2 {
-    color: #fff;
+    color: #111;
     font-weight: 400;
   }
 `;
@@ -20,7 +20,7 @@ export const BoxEdit = styled.div`
   margin: 40px auto 0 auto;
   border-radius: 8px;
   padding: 30px;
-  background: #5c5c5c;
+  background: #fff;
 
   .ant-select-selector {
     background: #ececec !important;
@@ -50,7 +50,7 @@ export const BoxEdit = styled.div`
       }
 
       label {
-        color: #fff;
+        color: #111;
         font-size: 14px;
         margin-bottom: 8px;
         display: block;
@@ -92,11 +92,50 @@ export const BoxEdit = styled.div`
       letter-spacing: 0.025em;
       font-size: 0.875rem;
       color: #fff;
-      background-color: #ff5c00;
+      background-color: #40d4c3;
       transition: all 0.15s ease;
       &:hover {
-        background-color: #f77830;
+        background-color: #40d4c3;
       }
     }
+  }
+`;
+
+export const Row = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+`;
+
+export const Column = styled.div`
+  width: 31.33%;
+  padding: 0 1%;
+  margin-bottom: 30px;
+
+  .ant-select-selector {
+    background: #ececec !important;
+    color: #959595 !important;
+    display: flex;
+    align-items: center;
+    height: 37px;
+  }
+
+  label {
+    display: block;
+    text-align: left;
+    margin-bottom: 10px;
+    color: #959595;
+  }
+
+  input {
+    border: none;
+    width: 100%;
+    height: 37px;
+    display: flex;
+    align-items: center;
+    background: #ececec;
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 14px;
   }
 `;

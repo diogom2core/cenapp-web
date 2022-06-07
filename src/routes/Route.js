@@ -16,7 +16,7 @@ function RouterWrapper({ isPublic, component: Component, ...rest }) {
         ) : (
           <Redirect
             to={{
-              pathname: '/admin/login',
+              pathname: '/',
               state: { from: props.location },
             }}
           />

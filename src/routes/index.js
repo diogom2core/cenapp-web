@@ -1,20 +1,28 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
+import RouterCustom from './Route';
 
 import AppointmentForm from '../pages/AppointmentForm';
 import AdminLogin from '../pages/AdminLogin';
 import AnalystCreate from '../pages/AnalystCreate';
-import AnalystList from '../pages/AnalystList';
+import Analysts from '../pages/Analysts';
+import Appointments from '../pages/Appointments';
 
 import PrivateRoute from './PrivateRoute';
 
 function Routes() {
   return (
     <Switch>
-      <Route path="/agendamento" component={AppointmentForm} />
-      <Route path="/admin/login" component={AdminLogin} />
-      <PrivateRoute path="/analyst/create" component={AnalystCreate} />
-      <PrivateRoute path="/analyst/list" component={AnalystList} />
+      <Route exact path="/agendamento" component={AppointmentForm} />
+      <RouterCustom path="/admin/login" component={AdminLogin} />
+      <PrivateRoute path="/agendamentos" component={Appointments} />
+      <PrivateRoute exact path="/" component={Appointments} />
+      <PrivateRoute exact path="/analistas" component={Analysts} />
+      <PrivateRoute
+        exact
+        path="/analistas/cadastro"
+        component={AnalystCreate}
+      />
     </Switch>
   );
 }
