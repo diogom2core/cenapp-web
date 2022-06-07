@@ -1,7 +1,21 @@
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import AppRoutes from './routes';
+
+import { AuthProvider } from './hooks/AuthContext';
+import GlobalStyles from './styles/global';
 
 function App() {
   return (
-    <h1>Hello</h1>
+    <>
+      <AuthProvider>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </AuthProvider>
+
+      <GlobalStyles />
+    </>
   );
 }
 
