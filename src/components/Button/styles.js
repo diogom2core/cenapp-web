@@ -11,6 +11,7 @@ export const Container = styled.button`
   border: none;
   font-size: 16px;
   font-weight: 500;
+  text-transform: capitalize;
 
   ${({ disable, loading }) =>
     (disable || loading) &&

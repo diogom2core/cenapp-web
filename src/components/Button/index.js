@@ -1,17 +1,21 @@
 import React from 'react';
 
 import { Container } from './styles';
+import loadingImage from '../../assets/loading.svg';
 
-function Button({ children, loading, disable, width, height, color }) {
+function Button({ children, loading, disable, width, height, color, type }) {
   return (
     <Container
+      type={type}
       disable={disable}
       loading={loading}
       width={width}
       height={height || 50}
       color={color || '#fe7259'}
     >
-      {children}
+      {!loading && children}
+
+      {loading && <img src={loadingImage} alt="" />}
     </Container>
   );
 }

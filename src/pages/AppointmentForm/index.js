@@ -2,12 +2,14 @@
 /* eslint-disable prettier/prettier */
 import { Field, Form, Formik } from 'formik';
 import React, { useState } from 'react';
+import { MdErrorOutline } from 'react-icons/md';
 
 import { Select } from 'antd';
 import { toast } from 'react-toastify';
-import { AppoitmentFinish, Column, Container, Content, Row } from './styles';
+import { AppoitmentFinish, Column, Container, Content, Row, UnvailableMessage } from './styles';
 import api from '../../services/api';
 import appointmentFinish from '../../assets/appointment_finish.png';
+import Button from '../../components/Button';
 
 const { Option } = Select;
 
@@ -22,12 +24,15 @@ function AppointmentForm() {
   const [serviceType, setServiceType] = useState('');
   const [sex, setSex] = useState('');
   const [isAppoitmentFinish, setIsAppoitmentFinish] = useState(false);
+  const [analystAvailable, setAnalystAvailable] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(values) {
     try {
+      setLoading(true);
       const { name, email } = values;
 
-      await api.post('/appointments', {
+      const response = await api.post('/appointments', {
         name,
         email,
         shift,
@@ -37,15 +42,27 @@ function AppointmentForm() {
         service_type: serviceType,
       });
 
+      setLoading(false);
+
+      const { have_analyst_available } = response.data;
+
+      if (have_analyst_available === false) {
+        setAnalystAvailable(false);
+        return;
+      }
+
       toast.success('Agendamento feito com sucesso!');
       setIsAppoitmentFinish(true);
     } catch (err) {
       const { message } = JSON.parse(err.request.responseText);
       toast.error(`Error ao cadastrar:  ${message}`);
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   }
 
-  console.log(isAppoitmentFinish);
+  console.log(modality);
   return (
     <Container>
       <Content>
@@ -85,21 +102,6 @@ function AppointmentForm() {
 
                   <Row>
                     <Column>
-                      <label htmlFor="district">Bairro</label>
-
-                      <Select
-                        id="district"
-                        defaultValue="Selecione o bairro"
-                        style={{ width: 205 }}
-                        onChange={(districtValue) => setDistrict(districtValue)}
-                      >
-                        <Option key="barro_01">Bairro 01</Option>
-                        <Option key="barro_02">Bairro 02</Option>
-                        <Option key="barro_03">Bairro 03</Option>
-                      </Select>
-                    </Column>
-
-                    <Column>
                       <label htmlFor="modality">Modalidade de Atendimento</label>
                       <Select
                         id="modality"
@@ -131,6 +133,26 @@ function AppointmentForm() {
                         <Option key="interverncoes">Intervernções Precoce</Option>
                       </Select>
                     </Column>
+
+                    {
+                      modality && modality !== 'online' && (
+                        <Column>
+                          <label htmlFor="district">Bairro</label>
+
+                          <Select
+                            id="district"
+                            defaultValue="Selecione o bairro"
+                            style={{ width: 205 }}
+                            onChange={(districtValue) => setDistrict(districtValue)}
+                          >
+                            <Option key="barro_01">Bairro 01</Option>
+                            <Option key="barro_02">Bairro 02</Option>
+                            <Option key="barro_03">Bairro 03</Option>
+                          </Select>
+                        </Column>
+                      )
+                    }
+
                   </Row>
 
                   <Row>
@@ -148,9 +170,22 @@ function AppointmentForm() {
                     </Column>
                   </Row>
 
-                  <button width={340} type="submit" loading={false}>
-                    Cadastrar
-                  </button>
+                  {
+                    !analystAvailable && (
+                      <UnvailableMessage>
+                        <MdErrorOutline size={22} color="red" />
+                        <p>
+                          Nenhum analista disponivel no momento, revise os critéios ou
+                          tente outro dia.
+                        </p>
+
+                      </UnvailableMessage>
+                    )
+                  }
+
+                  <Button width={340} type="submit" loading={loading}>
+                    cadastrar
+                  </Button>
                 </Form>
               )}
             </Formik>

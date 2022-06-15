@@ -14,15 +14,21 @@ function AdminLogin() {
     email: '',
     password: '',
   });
+  const [loading, setLoading] = useState(false);
+
   const { signIn } = useAuth();
 
   async function handleSubmit(values) {
     try {
+      setLoading(true);
       const { email, password } = values;
       await signIn({ email, password });
     } catch (err) {
+      setLoading(false);
       const error = err.response.data.message;
       toast.error(error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -55,7 +61,12 @@ function AdminLogin() {
                 />
               </InputField>
 
-              <Button width={340} type="submit" color="#40d4c3">
+              <Button
+                width={340}
+                type="submit"
+                color="#40d4c3"
+                loading={loading}
+              >
                 Entrar
               </Button>
               <Link to="/passwords/forgot">Esqueci minha senha</Link>

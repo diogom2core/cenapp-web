@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/jsx-one-expression-per-line */
+import { format, parseISO } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -83,7 +84,7 @@ function AnalystList() {
                 <tr key={analyst.id}>
                   <td>{analyst.name}</td>
                   <td>{analyst.email}</td>
-                  <td>{analyst.created_at}</td>
+                  <td>{format(parseISO(analyst.created_at), 'dd/MM/yyyy')}</td>
                 </tr>
               ))
             ) : (

@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/jsx-one-expression-per-line */
+import { format, parseISO } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 
 import api from '../../services/api';
@@ -83,7 +84,7 @@ function Appointments() {
                   <td>{analyst.name}</td>
                   <td>{analyst.email}</td>
                   <td>{analyst.status}</td>
-                  <td>{analyst.created_at}</td>
+                  <td>{format(parseISO(analyst.created_at), 'dd/MM/yyyy')}</td>
                 </tr>
               ))
             ) : (

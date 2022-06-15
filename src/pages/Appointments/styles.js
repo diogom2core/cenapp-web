@@ -130,6 +130,7 @@ export const Pagination = styled(PaginationAnt)`
   justify-content: center;
   margin-top: 40px !important;
 `;
+
 export const Filters = styled.div`
   margin: 40px 0;
   span {

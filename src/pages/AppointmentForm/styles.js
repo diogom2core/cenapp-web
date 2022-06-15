@@ -15,7 +15,7 @@ export const Container = styled.div`
 `;
 
 export const Content = styled.div`
-  max-width: 800px;
+  max-width: 840px;
   width: 100%;
   text-align: center;
   align-self: center;
@@ -59,12 +59,11 @@ export const Content = styled.div`
 export const Row = styled.div`
   width: 100%;
   display: flex;
-  justify-content: space-between;
 `;
 
 export const Column = styled.div`
   width: 31.33%;
-  padding: 0 1%;
+  padding: 0 2%;
   margin-bottom: 30px;
 
   .ant-select-selector {
@@ -111,5 +110,15 @@ export const AppoitmentFinish = styled.div`
 
   p {
     max-width: 400px;
+  }
+`;
+export const UnvailableMessage = styled.div`
+  display: flex;
+  justify-content: center;
+
+  p {
+    margin-left: 10px;
+    color: red;
+    max-width: 300px;
   }
 `;
