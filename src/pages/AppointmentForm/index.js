@@ -1,58 +1,84 @@
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable prettier/prettier */
 import { Field, Form, Formik } from 'formik';
-import React, { useState } from 'react';
-import { MdErrorOutline } from 'react-icons/md';
+import React, { useCallback, useState } from 'react';
+import { MdClose } from 'react-icons/md';
 
-import { Select } from 'antd';
+import { Select, Radio, Checkbox, Divider } from 'antd';
 import { toast } from 'react-toastify';
-import { AppoitmentFinish, Column, Container, Content, Row, UnvailableMessage } from './styles';
+
+import { AppoitmentFinish, Fild, Container, Content, FormBox, Footer, ModalConfirm } from './styles';
 import api from '../../services/api';
 import appointmentFinish from '../../assets/appointment_finish.png';
 import Button from '../../components/Button';
 
 const { Option } = Select;
+const CheckboxGroup = Checkbox.Group;
+const plainOptions = ['Manhã', 'Tarde', 'Noite'];
 
 function AppointmentForm() {
   const [initialValues] = useState({
     name: '',
     email: '',
   });
-  const [shift, setShift] = useState('');
   const [district, setDistrict] = useState('');
   const [modality, setModality] = useState('');
   const [serviceType, setServiceType] = useState('');
   const [sex, setSex] = useState('');
+  const [sexAnalyst, setSexAnalyst] = useState('');
   const [isAppoitmentFinish, setIsAppoitmentFinish] = useState(false);
-  const [analystAvailable, setAnalystAvailable] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [hasAssociationSPBSB, setHasAssociationSPBSB] = useState(false);
+  const [fisrtSubscription, setFisrtSubscription] = useState(false);
+  const [checkedList, setCheckedList] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [formValues, setFormValues] = useState();
 
   async function handleSubmit(values) {
+    setIsOpen(true);
+    setFormValues(values);
+  }
+
+  const sendAppointment = useCallback(async () => {
     try {
       setLoading(true);
-      const { name, email } = values;
 
-      const response = await api.post('/appointments', {
+      const { name, email, birthday, bond_patient, cell_phone,
+        responsible_appointment, responsible_patient,
+        patient_one_name, patient_two_name,
+        patient_one_birthday, patient_two_birthday,
+        patient_one_phone, patient_two_phone,
+        kinship, phone } = formValues;
+
+      await api.post('/appointments', {
         name,
         email,
-        shift,
         district,
-        analyst_sex: sex,
+        analyst_sex: sexAnalyst,
         service_modality: modality,
         service_type: serviceType,
+        sex,
+        birthday,
+        bond_patient,
+        cell_phone,
+        responsible_appointment,
+        responsible_patient,
+        shift: String(checkedList),
+        patient_one_name,
+        patient_two_name,
+        patient_one_birthday,
+        patient_two_birthday,
+        patient_one_phone,
+        patient_two_phone,
+        kinship,
+        phone,
       });
 
       setLoading(false);
 
-      const { have_analyst_available } = response.data;
-
-      if (have_analyst_available === false) {
-        setAnalystAvailable(false);
-        return;
-      }
-
       toast.success('Agendamento feito com sucesso!');
       setIsAppoitmentFinish(true);
+      setIsOpen(false);
     } catch (err) {
       const { message } = JSON.parse(err.request.responseText);
       toast.error(`Error ao cadastrar:  ${message}`);
@@ -60,9 +86,36 @@ function AppointmentForm() {
     } finally {
       setLoading(false);
     }
+  }, [formValues]);
+
+  function getServiceTypeMessage(serviceTypeValue) {
+    switch (serviceTypeValue) {
+      case 'adolecente':
+        return `LEIA COM ATENÇÃO:
+        Atendimento para pessoas acima de 13 a 17 anos.`;
+      case 'adultos':
+        return `LEIA COM ATENÇÃO:
+        Atendimento para pessoas acima de 18 anos.`;
+      case 'casal':
+        return `LEIA COM ATENÇÃO:
+        Atendimento para pessoas acima de 18 anos.`;
+      case 'criancas':
+        return `LEIA COM ATENÇÃO:
+        Atendimento para pessoas de 3 a 12 anos`;
+      case 'familia':
+        return `LEIA COM ATENÇÃO:
+          Atendimento para família.`;
+      case 'idosos':
+        return `LEIA COM ATENÇÃO:
+        Atendimento para pessoas acima 60 anos`;
+      case 'interverncoes':
+        return `LEIA COM ATENÇÃO:
+          Intervenção precoce é um tipo de atendimento em que a mãe e/ou pai ou responsável (is) juntamente com o bebê (até 3 anos)  são atendidos em consultório e que visa trabalhar demandas dos vínculos pais/bebê, prevenindo patologias futuras.`;
+      default:
+        return 'Selecione o tipo de serviço';
+    }
   }
 
-  console.log(modality);
   return (
     <Container>
       <Content>
@@ -73,70 +126,210 @@ function AppointmentForm() {
                 <Form>
                   <h3>Agendamento</h3>
 
-                  <Row>
-                    <Column>
-                      <label htmlFor="name">Nome</label>
-                      <Field id="name" name="name" placeholder="Nome" />
-                    </Column>
+                  <FormBox>
+                    <h3> Atendimento</h3>
 
-                    <Column>
-                      <label htmlFor="email">E-mail</label>
-                      <Field id="email" name="email" placeholder="E-mail" />
-                    </Column>
+                    <div className="form_box_main">
+                      <div>
+                        <Fild>
+                          <label htmlFor="type_of_service">Tipo de Atendimento</label>
+                          <Select
+                            id="type_of_service"
+                            defaultValue="Modalidade de atendimento"
+                            style={{ width: 205 }}
+                            onChange={(serviceTypeValue) =>
+                              setServiceType(serviceTypeValue)}
+                          >
+                            <Option key="adultos">Adultos</Option>
+                            <Option key="idosos">Idosos</Option>
+                            <Option key="criancas">Crianças</Option>
+                            <Option key="adolecente">Adolecente</Option>
+                            <Option key="casal">Casal</Option>
+                            <Option key="familia">Família</Option>
+                            <Option key="interverncoes">Intervernções Precoce</Option>
+                          </Select>
+                        </Fild>
+                      </div>
 
-                    <Column>
-                      <label htmlFor="period">Turno</label>
+                      <div>
+                        {getServiceTypeMessage(serviceType)}
+                      </div>
+                    </div>
 
-                      <Select
-                        id="shift"
-                        defaultValue="Selecione o periodo"
-                        style={{ width: 205 }}
-                        onChange={(valueShift) => setShift(valueShift)}
-                      >
-                        <Option key="manha">Manhã</Option>
-                        <Option key="tarde">Tarde</Option>
-                        <Option key="noite">Noite</Option>
-                      </Select>
-                    </Column>
-                  </Row>
+                    <div className="conditional_inputs">
+                      {
+                        (serviceType === 'adolecente' || serviceType === 'criancas' || serviceType === 'interverncoes') && (
+                          <>
+                            <Fild>
+                              <label htmlFor="name">Responsável pela solicitação</label>
+                              <Field id="name" name="responsible_appointment" placeholder="Responsável pela solicitação" />
+                            </Fild>
 
-                  <Row>
-                    <Column>
-                      <label htmlFor="modality">Modalidade de Atendimento</label>
-                      <Select
-                        id="modality"
-                        defaultValue="Modalidade de atendimento"
-                        style={{ width: 205 }}
-                        onChange={(modalityValue) => setModality(modalityValue)}
-                      >
-                        <Option key="online">Online</Option>
-                        <Option key="presencial">Presencial</Option>
-                        <Option key="hibrido">Hibrido</Option>
-                      </Select>
-                    </Column>
+                            <Fild>
+                              <label htmlFor="name">Responsável pelo paciente</label>
+                              <Field id="name" name="responsible_patient" placeholder="Responsável pelo paciente" />
+                            </Fild>
 
-                    <Column>
-                      <label htmlFor="type_of_service">Tipo de Atendimento</label>
-                      <Select
-                        id="type_of_service"
-                        defaultValue="Modalidade de atendimento"
-                        style={{ width: 205 }}
-                        onChange={(serviceTypeValue) =>
-                          setServiceType(serviceTypeValue)}
-                      >
-                        <Option key="adultos">Adultos</Option>
-                        <Option key="idosos">Idosos</Option>
-                        <Option key="criancas">Crianças</Option>
-                        <Option key="adolecente">Adolecente</Option>
-                        <Option key="casal">Casal</Option>
-                        <Option key="familia">Família</Option>
-                        <Option key="interverncoes">Intervernções Precoce</Option>
-                      </Select>
-                    </Column>
+                            <Fild>
+                              <label htmlFor="name">Vínculo com paciente</label>
+                              <Field id="name" name="bond_patient" placeholder="Vínculo com paciente" />
+                            </Fild>
+                          </>
+                        )
+                       }
 
-                    {
+                      {
+                        serviceType === 'casal' && (
+                          <>
+                            <Fild>
+                              <label htmlFor="name">Nome do paciente 01</label>
+                              <Field id="name" name="patient_one_name" placeholder="Nome do paciente 01" />
+                            </Fild>
+
+                            <Fild>
+                              <label htmlFor="name">Nome do paciente 02</label>
+                              <Field id="name" name="patient_two_name" placeholder="Nome do paciente 02" />
+                            </Fild>
+
+                            <Fild>
+                              <label htmlFor="name">Nascimento do paciente 01</label>
+                              <Field id="name" name="patient_one_birthday" placeholder="Nascimento do paciente 01;" />
+                            </Fild>
+
+                            <Fild>
+                              <label htmlFor="name">Nascimento do paciente 02</label>
+                              <Field id="name" name="patient_two_birthday" placeholder="Nascimento do paciente 02" />
+                            </Fild>
+
+                            <Fild>
+                              <label htmlFor="name">Telefone do paciente 01</label>
+                              <Field id="name" name="patient_one_phone" placeholder="Telefone do paciente 01" />
+                            </Fild>
+
+                            <Fild>
+                              <label htmlFor="name">Telefone do paciente 01</label>
+                              <Field id="name" name="patient_two_phone" placeholder="Telefone do paciente 01" />
+                            </Fild>
+                          </>
+                        )
+                       }
+                    </div>
+
+                  </FormBox>
+
+                  <FormBox>
+                    <h3>Informações do paciente</h3>
+
+                    <div className="conditional_inputs">
+                      <Fild>
+                        <label htmlFor="name">Nome</label>
+                        <Field id="name" name="name" placeholder="Nome" />
+                      </Fild>
+
+                      <Fild>
+                        <label htmlFor="email">E-mail</label>
+                        <Field id="email" name="email" placeholder="E-mail" />
+                      </Fild>
+
+                      <Fild>
+                        <label htmlFor="email">Data de nascimento</label>
+                        <Field id="email" name="birthday" placeholder="Data de nascimento" />
+                      </Fild>
+
+                      <Fild>
+                        <label htmlFor="sex">Sexo</label>
+                        <Select
+                          id="sex"
+                          defaultValue="Sexo"
+                          style={{ width: 205 }}
+                          onChange={(sexValue) => setSex(sexValue)}
+                        >
+                          <Option key="m">Masculino</Option>
+                          <Option key="f">Feminino</Option>
+                        </Select>
+                      </Fild>
+
+                      <Fild>
+                        <label htmlFor="email">Telefone celular</label>
+                        <Field id="email" name="cell_phone" placeholder="Telefone celular" />
+                      </Fild>
+
+                      <Fild>
+                        <label htmlFor="email">Telefone fixo</label>
+                        <Field id="email" name="phone" placeholder="Telefone fixo" />
+                      </Fild>
+                    </div>
+                  </FormBox>
+
+                  <FormBox>
+                    <h3>Preferências do atendimento</h3>
+
+                    <div className="conditional_inputs">
+                      <Fild>
+                        <label htmlFor="period">Tem vínculo com algum membro da SPBsb?</label>
+
+                        <Radio.Group
+                          onChange={(event) => setHasAssociationSPBSB(event.target.value)}
+                          value={hasAssociationSPBSB}
+                        >
+                          <Radio value={false}>Não</Radio>
+                          <Radio value>Sim</Radio>
+                        </Radio.Group>
+                      </Fild>
+
+                      <Fild>
+                        <label htmlFor="period">Primeira inscrição no cenapp?</label>
+
+                        <Radio.Group
+                          onChange={(event) => setFisrtSubscription(event.target.value)}
+                          value={fisrtSubscription}
+                        >
+                          <Radio value={false}>Não</Radio>
+                          <Radio value>Sim</Radio>
+                        </Radio.Group>
+                      </Fild>
+
+                      <Fild>
+                        <label htmlFor="sex">Sexo do Analísta</label>
+                        <Select
+                          id="sex"
+                          defaultValue="Sexo do analista"
+                          style={{ width: 205 }}
+                          onChange={(sexValue) => setSexAnalyst(sexValue)}
+                        >
+                          <Option key="m">Homem</Option>
+                          <Option key="f">Mulher</Option>
+                          <Option key="i">Indiferente</Option>
+                        </Select>
+                      </Fild>
+
+                      <Fild>
+                        <label htmlFor="period">Qual o melhor horário para atendimento? (pode marcar mais de uma)*</label>
+
+                        <CheckboxGroup
+                          options={plainOptions}
+                          value={checkedList}
+                          onChange={(list) => setCheckedList(list)}
+                        />
+                      </Fild>
+
+                      <Fild>
+                        <label htmlFor="modality">Modalidade de Atendimento</label>
+                        <Select
+                          id="modality"
+                          defaultValue="Modalidade de atendimento"
+                          style={{ width: 205 }}
+                          onChange={(modalityValue) => setModality(modalityValue)}
+                        >
+                          <Option key="presencial">Presencial</Option>
+                          <Option key="online">Online</Option>
+                          <Option key="indiferente">Indiferente</Option>
+                        </Select>
+                      </Fild>
+
+                      {
                       modality && modality !== 'online' && (
-                        <Column>
+                        <Fild>
                           <label htmlFor="district">Bairro</label>
 
                           <Select
@@ -149,46 +342,33 @@ function AppointmentForm() {
                             <Option key="barro_02">Bairro 02</Option>
                             <Option key="barro_03">Bairro 03</Option>
                           </Select>
-                        </Column>
+                        </Fild>
                       )
                     }
-
-                  </Row>
-
-                  <Row>
-                    <Column>
-                      <label htmlFor="sex">Sexo do Analísta</label>
-                      <Select
-                        id="sex"
-                        defaultValue="Sexo do analista"
-                        style={{ width: 205 }}
-                        onChange={(sexValue) => setSex(sexValue)}
-                      >
-                        <Option key="m">Masculino</Option>
-                        <Option key="f">Feminino</Option>
-                      </Select>
-                    </Column>
-                  </Row>
-
-                  {
-                    !analystAvailable && (
-                      <UnvailableMessage>
-                        <MdErrorOutline size={22} color="red" />
-                        <p>
-                          Nenhum analista disponivel no momento, revise os critéios ou
-                          tente outro dia.
-                        </p>
-
-                      </UnvailableMessage>
-                    )
-                  }
+                    </div>
+                  </FormBox>
 
                   <Button width={340} type="submit" loading={loading}>
-                    cadastrar
+                    Continuar
                   </Button>
                 </Form>
               )}
             </Formik>
+          )
+        }
+
+        {
+          !appointmentFinish && (
+            <>
+              <Divider />
+
+              <Footer>
+                <p>
+                  Dúvidas e informações: (xx) x.xxxx-xxxx (preferencialmente whatsapp)
+                  ou e-mail@xxx.com.br
+                </p>
+              </Footer>
+            </>
           )
         }
 
@@ -210,6 +390,53 @@ function AppointmentForm() {
           )
         }
 
+        <ModalConfirm open={isOpen}>
+          <div className="content">
+            <div className="content-header">
+              <button type="button">
+                <MdClose
+                  size={20}
+                  color="#3a3a3a"
+                  onClick={() => setIsOpen(false)}
+                />
+              </button>
+            </div>
+
+            <div>
+              <strong>INFORMAÇÃO LEI</strong>
+              <p>
+                - O atendimento pelo Cenapp não é gratuito e é sujeito à existência de vagas.
+                O valor da sessão deverá ser acordado entre a dupla analista e paciente;
+              </p>
+              <p>- O tratamento psicanalítico é realizado de 1 vezes por semana;</p>
+              <p>
+                - O sistema atende às opções que você marcou na ficha de inscrição, mas
+                não necessariamente haverá psicanalistas com vagas disponíveis dentro dos
+                critérios escolhidos;
+              </p>
+              <p>
+                - Após a inscrição, o sistema lhe enviará um email com o nome e telefone do
+                analista com vaga disponível. Fique atento à caixa de spam;
+              </p>
+              <p>
+                - O prazo máximo para você entrar em contato com o analista é até 15 dias a
+                partir do recebimento do email com o contato do analista.
+              </p>
+
+              <span>
+                ATENÇÃO: Caso você ultrapasse prazo de 15 dias para entrar em contato com
+                o analista, preencha uma nova ficha.
+              </span>
+            </div>
+
+            <footer className="content-footer">
+              <span onClick={() => setIsOpen(false)}>Cancelar</span>
+              <button type="button" onClick={sendAppointment}>
+                Confirmar
+              </button>
+            </footer>
+          </div>
+        </ModalConfirm>
       </Content>
     </Container>
   );

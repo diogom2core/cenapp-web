@@ -6,8 +6,7 @@ export const Container = styled.div`
   align-items: center;
   width: 100%;
   margin: 0 auto;
-  height: 100vh;
-  background: #232129;
+  background: #f2f2f2;
 
   @media (max-width: 414px) {
     justify-content: center;
@@ -16,21 +15,26 @@ export const Container = styled.div`
 
 export const Content = styled.div`
   max-width: 840px;
+  margin-top: 40px;
+  margin-bottom: 40px;
   width: 100%;
-  text-align: center;
   align-self: center;
   background: #fff;
   border-radius: 7px;
-  box-shadow: 1px 1px 8px rgba(1, 1, 0, 0.7);
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   padding: 50px;
-  margin: 0 15px;
+
+  @media (max-width: 500px) {
+    padding: 50px 30px;
+  }
 
   form {
     max-width: 800px;
     width: 100%;
     margin: 0 auto;
 
-    h3 {
+    > h3 {
+      text-align: center;
       font-size: 24px;
       font-weight: 500;
       margin-bottom: 60px;
@@ -56,15 +60,15 @@ export const Content = styled.div`
   }
 `;
 
-export const Row = styled.div`
-  width: 100%;
-  display: flex;
-`;
-
-export const Column = styled.div`
-  width: 31.33%;
-  padding: 0 2%;
+export const Fild = styled.div`
   margin-bottom: 30px;
+  margin-right: 40px;
+  min-width: 200px;
+
+  @media (max-width: 500px) {
+    margin-right: 0;
+    width: 100%;
+  }
 
   .ant-select-selector {
     background: #ececec !important;
@@ -72,6 +76,17 @@ export const Column = styled.div`
     display: flex;
     align-items: center;
     height: 37px;
+  }
+
+  .ant-radio-group {
+    display: flex;
+  }
+
+  .ant-checkbox-group {
+    display: flex;
+    label {
+      display: flex;
+    }
   }
 
   label {
@@ -98,6 +113,7 @@ export const AppoitmentFinish = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
 
   img {
     width: 150px;
@@ -112,6 +128,7 @@ export const AppoitmentFinish = styled.div`
     max-width: 400px;
   }
 `;
+
 export const UnvailableMessage = styled.div`
   display: flex;
   justify-content: center;
@@ -120,5 +137,128 @@ export const UnvailableMessage = styled.div`
     margin-left: 10px;
     color: red;
     max-width: 300px;
+  }
+`;
+
+export const FormBox = styled.div`
+  margin-bottom: 40px;
+
+  h3 {
+    color: #3f3f3f;
+    font-size: 18px;
+    text-align: left;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .form_box_main {
+    display: flex;
+    margin-bottom: 20px;
+    div {
+      width: 50%;
+    }
+
+    @media (max-width: 500px) {
+      flex-direction: column;
+    }
+  }
+
+  .conditional_inputs {
+    display: flex;
+    flex-wrap: wrap;
+  }
+`;
+
+export const Footer = styled.div`
+  p {
+    text-align: center;
+  }
+`;
+
+export const ModalConfirm = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  align-items: center;
+  justify-content: center;
+  display: ${(props) => (props.open ? 'flex' : 'none')};
+  transition: 0.5s;
+
+  .content {
+    width: 100%;
+    max-width: 650px;
+    background: #fff;
+    border-radius: 7px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    padding: 20px;
+    display: ${(props) => (props.open ? 'block' : 'none')};
+    transition: 0.5s;
+
+    &-header {
+      text-align: right;
+      svg {
+        cursor: pointer;
+      }
+      button {
+        background: none;
+        border: none;
+      }
+    }
+
+    div {
+      p {
+        font-size: 14px;
+      }
+
+      strong {
+        text-align: center;
+        display: block;
+        margin-bottom: 30px;
+      }
+
+      span {
+        display: block;
+        text-align: center;
+        color: red;
+      }
+
+      @media (max-width: 500px) {
+        p {
+          font-size: 12px;
+        }
+      }
+    }
+
+    &-footer {
+      margin-top: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      span {
+        color: #6a6a6a;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      button {
+        margin-left: 30px;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 5px;
+        position: relative;
+        text-transform: none;
+        transition: all 0.15s ease;
+        letter-spacing: 0.025em;
+        font-size: 0.875rem;
+        color: #fff;
+        background-color: #40d4c3;
+        box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11),
+          0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+    }
   }
 `;
