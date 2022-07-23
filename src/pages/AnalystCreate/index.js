@@ -12,6 +12,7 @@ import { useHistory } from 'react-router-dom';
 import { Container, BoxEdit, Column } from './styles';
 import api from '../../services/api';
 import Button from '../../components/Button';
+import REGIONS from '../../helpers/regions';
 
 const { Option } = Select;
 const CheckboxGroup = Checkbox.Group;
@@ -116,17 +117,15 @@ function AnalystCreate() {
 
               <Row>
                 <Column>
-                  <label htmlFor="district">Bairro</label>
-
+                  <label htmlFor="sex">Sexo do Analísta</label>
                   <Select
-                    id="district"
-                    defaultValue="Selecione o bairro"
+                    id="sex"
+                    defaultValue="Sexo do analista"
                     style={{ width: 205 }}
-                    onChange={(valueDistrict) => setDistrict(valueDistrict)}
+                    onChange={(sexValue) => setSex(sexValue)}
                   >
-                    <Option key="barro_01">Bairro 01</Option>
-                    <Option key="barro_02">Bairro 02</Option>
-                    <Option key="barro_03">Bairro 03</Option>
+                    <Option key="m">Masculino</Option>
+                    <Option key="f">Feminino</Option>
                   </Select>
                 </Column>
 
@@ -144,18 +143,22 @@ function AnalystCreate() {
                   </Select>
                 </Column>
 
-                <Column>
-                  <label htmlFor="sex">Sexo do Analísta</label>
-                  <Select
-                    id="sex"
-                    defaultValue="Sexo do analista"
-                    style={{ width: 205 }}
-                    onChange={(sexValue) => setSex(sexValue)}
-                  >
-                    <Option key="m">Masculino</Option>
-                    <Option key="f">Feminino</Option>
-                  </Select>
-                </Column>
+                {(modality === 'hibrido' || modality === 'presencial') && (
+                  <Column>
+                    <label htmlFor="district">Bairro</label>
+
+                    <Select
+                      id="district"
+                      defaultValue="Selecione o bairro"
+                      style={{ width: 205 }}
+                      onChange={(valueDistrict) => setDistrict(valueDistrict)}
+                    >
+                      {REGIONS.map((region) => (
+                        <Option key={region}>{region}</Option>
+                      ))}
+                    </Select>
+                  </Column>
+                )}
               </Row>
 
               <Row>
