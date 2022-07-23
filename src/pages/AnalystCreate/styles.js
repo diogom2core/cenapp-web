@@ -11,16 +11,30 @@ export const Container = styled.div`
 
   h2 {
     color: #111;
-    font-weight: 400;
+    font-weight: 600;
+    font-size: 22px;
   }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  animation: fadeIn 0.5s ease-in-out;
 `;
 
 export const BoxEdit = styled.div`
-  max-width: 820px;
+  width: 100%;
+  max-width: 850px;
   margin: 40px auto 0 auto;
   border-radius: 8px;
   padding: 30px;
   background: #fff;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 
   .ant-select-selector {
     background: #ececec !important;
@@ -50,6 +64,7 @@ export const BoxEdit = styled.div`
       }
 
       label {
+        font-weight: 500;
         color: #111;
         font-size: 14px;
         margin-bottom: 8px;
@@ -80,23 +95,13 @@ export const BoxEdit = styled.div`
   .button-box {
     text-align: center;
     margin-top: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     button {
-      margin-left: 25px;
-      border: none;
-      padding: 10px 45px;
-      border-radius: 5px;
-      position: relative;
-      text-transform: none;
-      transition: all 0.15s ease;
-      letter-spacing: 0.025em;
-      font-size: 0.875rem;
       color: #fff;
       background-color: #40d4c3;
-      transition: all 0.15s ease;
-      &:hover {
-        background-color: #40d4c3;
-      }
     }
   }
 `;
@@ -118,13 +123,18 @@ export const Column = styled.div`
     display: flex;
     align-items: center;
     height: 37px;
+
+    span {
+      color: #292828;
+    }
   }
 
   label {
     display: block;
     text-align: left;
     margin-bottom: 10px;
-    color: #959595;
+    color: #292828;
+    font-weight: 500;
   }
 
   input {
@@ -137,5 +147,13 @@ export const Column = styled.div`
     border-radius: 4px;
     padding: 12px;
     font-size: 14px;
+  }
+  .ant-checkbox-group {
+    display: flex;
+    width: 100%;
+
+    label {
+      display: flex;
+    }
   }
 `;

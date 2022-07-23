@@ -19,6 +19,7 @@ export default createGlobalStyle`
 
   body, input, button {
     font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
   }
 
   button {

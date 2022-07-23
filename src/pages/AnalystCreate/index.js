@@ -1,17 +1,30 @@
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable jsx-a11y/label-has-for */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState } from 'react';
 import { Field, Form, Formik } from 'formik';
-import { Row, Select } from 'antd';
+import { Row, Select, Checkbox } from 'antd';
 
 import { toast } from 'react-toastify';
 import { useHistory } from 'react-router-dom';
 import { Container, BoxEdit, Column } from './styles';
 import api from '../../services/api';
+import Button from '../../components/Button';
 
 const { Option } = Select;
+const CheckboxGroup = Checkbox.Group;
+const plainOptions = [
+  'adultos',
+  'idosos',
+  'crianças',
+  'adolescentes',
+  'casal',
+  'família',
+  'intervenções precoce',
+];
+
 function AnalystCreate() {
   const [initialValues] = useState({
     name: '',
@@ -22,27 +35,48 @@ function AnalystCreate() {
   const [district, setDistrict] = useState('');
   const [modality, setModality] = useState('');
   const [sex, setSex] = useState('');
+  const [priorityLevel, setpriorityLevel] = useState('');
+  const [serviceTypeList, setServiceTypeList] = useState([]);
+  const [createLoading, setCreateLoading] = useState(false);
 
   const history = useHistory();
 
   async function createAnalyst(values) {
+    setCreateLoading(true);
     try {
       const { name, email } = values;
-
       await api.post('/admin/analyst', {
         name,
         email,
         shift,
         district,
-        sex,
         service_modality: modality,
+        sex,
+        priority_levels: Number(priorityLevel),
+        service_type_adult: serviceTypeList.some((type) => type === 'adultos'),
+        service_type_elderly: serviceTypeList.some((type) => type === 'idosos'),
+        service_type_children: serviceTypeList.some(
+          (type) => type === 'crianças',
+        ),
+        service_type_adolescent: serviceTypeList.some(
+          (type) => type === 'adolescentes',
+        ),
+        service_type_couple: serviceTypeList.some((type) => type === 'casal'),
+        service_type_family: serviceTypeList.some((type) => type === 'família'),
+        service_type_early_interventions: serviceTypeList.some(
+          (type) => type === 'intervenções precoce',
+        ),
       });
 
       toast.success('Analista cadastrado com sucesso!');
+      setCreateLoading(false);
       history.goBack();
     } catch (err) {
       const { message } = JSON.parse(err.request.responseText);
       toast.error(`Error ao cadastrar:  ${message}`);
+      setCreateLoading(false);
+    } finally {
+      setCreateLoading(false);
     }
   }
 
@@ -124,10 +158,44 @@ function AnalystCreate() {
                 </Column>
               </Row>
 
+              <Row>
+                <Column>
+                  <label htmlFor="service_type">Tipos de atendimento</label>
+
+                  <CheckboxGroup
+                    options={plainOptions}
+                    value={serviceTypeList}
+                    onChange={(list) => setServiceTypeList(list)}
+                  />
+                </Column>
+              </Row>
+
+              <Row>
+                <Column>
+                  <label htmlFor="sex">Nivel de Prioridade</label>
+                  <Select
+                    id="priority"
+                    defaultValue="Nível de prioridade"
+                    style={{ width: 300 }}
+                    onChange={(priorityValue) =>
+                      setpriorityLevel(priorityValue)
+                    }
+                  >
+                    <Option key="1">
+                      nível 1: membros do Instituto em aula
+                    </Option>
+                    <Option key="2">
+                      nível 2: membros do Instituto egressos
+                    </Option>
+                    <Option key="3">nível 3: membros da SPBsb</Option>
+                  </Select>
+                </Column>
+              </Row>
+
               <div className="button-box">
-                <button width={340} type="submit" loading={false}>
-                  Cadastrar
-                </button>
+                <Button width={250} type="submit" loading={createLoading}>
+                  Cadastrar Analista
+                </Button>
               </div>
             </Form>
           )}
