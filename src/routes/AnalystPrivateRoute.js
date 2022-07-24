@@ -2,24 +2,23 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
-import Header from '../components/Header';
+import HeaderAnalyst from '../components/HeaderAnalyst';
 import Main from '../components/Main';
-import Sidebar from '../components/Sidebar';
+import SidebarAnalyst from '../components/SidebarAnalyst';
 import { useAuth } from '../hooks/AnalystAuthContext';
 
 function AnalystPrivateRoute({ isPublic, component: Component, ...rest }) {
   const { user } = useAuth();
-  console.log('Analista', user);
   return (
     <Route
       {...rest}
       render={props =>
         (user ? (
           <>
-            <Header />
+            <HeaderAnalyst />
 
             <Main>
-              <Sidebar />
+              <SidebarAnalyst />
               <Component />
             </Main>
           </>

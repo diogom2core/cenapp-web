@@ -2,15 +2,17 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import RouterCustom from './Route';
 
+import PrivateRoute from './PrivateRoute';
 import AppointmentForm from '../pages/AppointmentForm';
 import AdminLogin from '../pages/AdminLogin';
 import AnalystCreate from '../pages/AnalystCreate';
-import Analysts from '../pages/Analysts';
 import Appointments from '../pages/Appointments';
 import AppointmentsRead from '../pages/AppointmentsRead';
-import AnalystLogin from '../pages/AnalystLogin';
+import Analysts from '../pages/Analysts';
 
-import PrivateRoute from './PrivateRoute';
+import AnalystLogin from '../pages/AnalystLogin';
+import AnalystAppointmentsShow from '../pages/AnalystAppointmentsShow';
+import AnalystAppointmentsList from '../pages/AnalystAppointmentsList';
 import AnalystPrivateRoute from './AnalystPrivateRoute';
 
 function Routes() {
@@ -37,7 +39,16 @@ function Routes() {
       />
 
       {/* Private Routes Analyst */}
-      <AnalystPrivateRoute path="/analista" component={Appointments} />
+      <AnalystPrivateRoute
+        exact
+        path="/analista/solicitacoes"
+        component={AnalystAppointmentsList}
+      />
+      <AnalystPrivateRoute
+        exact
+        path="/analista/solicitacao/:appointment_id"
+        component={AnalystAppointmentsShow}
+      />
     </Switch>
   );
 }

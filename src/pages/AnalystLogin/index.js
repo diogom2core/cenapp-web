@@ -24,7 +24,7 @@ function AnalystLogin() {
       setLoading(true);
       const { email, password } = values;
       await signIn({ email, password });
-      history.push('/analista');
+      history.push('/analista/solicitacoes');
     } catch (err) {
       setLoading(false);
       const error = err.response.data.message;
