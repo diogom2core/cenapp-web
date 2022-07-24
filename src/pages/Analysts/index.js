@@ -8,6 +8,7 @@ import { Select } from 'antd';
 import api from '../../services/api';
 import { Container, Table, Form, Pagination, Title, Filters, FilterItem } from './styles';
 import Loading from '../../components/Loading';
+import REGIONS from '../../helpers/regions';
 
 const { Option } = Select;
 function AnalystList() {
@@ -43,7 +44,8 @@ function AnalystList() {
 
   const searchAnalyst = useCallback(async () => {
     setIsLoading(true);
-    const response = await api.get(`/admin/analyst?search=${searchWord}&shift=${shift}&district=${district}&service_modality=${modality}&sex=${sex}`);
+    const districtFormmated = district !== 'null' ? district.toLowerCase() : district;
+    const response = await api.get(`/admin/analyst?search=${searchWord}&shift=${shift}&district=${districtFormmated}&service_modality=${modality}&sex=${sex}`);
     setIsLoading(true);
     setAnalysts(response.data);
     setIsLoading(false);
@@ -91,9 +93,11 @@ function AnalystList() {
             onChange={(valueDistrict) => setDistrict(valueDistrict)}
           >
             <Option key="null">Todos</Option>
-            <Option key="barro_01">Bairro 01</Option>
-            <Option key="barro_02">Bairro 02</Option>
-            <Option key="barro_03">Bairro 03</Option>
+            {
+              REGIONS.map(region => (
+                <Option key={region}>{region}</Option>
+              ))
+            }
           </Select>
         </FilterItem>
 

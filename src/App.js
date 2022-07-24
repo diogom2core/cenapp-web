@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import AppRoutes from './routes';
 
 import 'react-toastify/dist/ReactToastify.css';
+import { AuthProvider as AnalystAuthProvider } from './hooks/AnalystAuthContext';
 import { AuthProvider } from './hooks/AuthContext';
 import GlobalStyles from './styles/global';
 
@@ -11,9 +12,11 @@ function App() {
   return (
     <>
       <AuthProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
+        <AnalystAuthProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </AnalystAuthProvider>
       </AuthProvider>
 
       <GlobalStyles />

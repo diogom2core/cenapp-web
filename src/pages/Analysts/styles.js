@@ -9,21 +9,17 @@ export const Container = styled.div`
   margin-left: 70px;
   margin-right: 70px;
   padding-bottom: 120px;
-
-  h2 {
-    color: #111;
-    font-weight: 600;
-    margin: 0;
-    font-size: 22px;
-  }
 `;
 
 export const Title = styled.div`
   display: flex;
   align-items: center;
 
-  h1 {
+  h2 {
+    color: #111;
+    font-weight: 600;
     margin: 0;
+    font-size: 22px;
   }
 
   a {

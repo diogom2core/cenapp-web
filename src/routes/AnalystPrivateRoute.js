@@ -5,11 +5,11 @@ import { Redirect, Route } from 'react-router-dom';
 import Header from '../components/Header';
 import Main from '../components/Main';
 import Sidebar from '../components/Sidebar';
-import { useAuth } from '../hooks/AuthContext';
+import { useAuth } from '../hooks/AnalystAuthContext';
 
-function PrivateRoute({ isPublic, component: Component, ...rest }) {
+function AnalystPrivateRoute({ isPublic, component: Component, ...rest }) {
   const { user } = useAuth();
-  console.log('user', user);
+  console.log('Analista', user);
   return (
     <Route
       {...rest}
@@ -26,7 +26,7 @@ function PrivateRoute({ isPublic, component: Component, ...rest }) {
         ) : (
           <Redirect
             to={{
-              pathname: '/admin/login',
+              pathname: '/analista/login',
               state: { from: props.location },
             }}
           />
@@ -35,4 +35,4 @@ function PrivateRoute({ isPublic, component: Component, ...rest }) {
   );
 }
 
-export default PrivateRoute;
+export default AnalystPrivateRoute;
