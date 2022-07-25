@@ -1,13 +1,16 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/jsx-one-expression-per-line */
 import { Select } from 'antd';
-import { format, parseISO } from 'date-fns';
+import { addDays, format, parseISO } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MdVisibility } from 'react-icons/md';
+import { MdDateRange, MdVisibility } from 'react-icons/md';
+import DayPicker from 'react-day-picker';
 
+import { pt } from 'date-fns/locale';
 import api from '../../services/api';
-import { Container, Table, Form, Pagination, Title, Filters, FilterItem } from './styles';
+import { Container, Table, Form, Pagination, Title, Filters, FilterItem, FilterDate, SelectDate } from './styles';
+import Loading from '../../components/Loading';
 
 const { Option } = Select;
 
@@ -18,6 +21,11 @@ function Appointments() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [filterStatus, setFilterStatus] = useState('');
+
+  const [startDateSelected, setStartDateSelected] = useState(new Date());
+  const [endDateSelected, setEndDateSelected] = useState(addDays(new Date(), 30));
+  const [showDatePickerStartDate, setShowDatePickerStartDate] = useState(false);
+  const [showDatePickerEndDate, setShowDatePickerendDate] = useState(false);
 
   async function loadAppointments() {
     setIsLoading(true);
@@ -40,11 +48,8 @@ function Appointments() {
   }, [page]);
 
   async function searchAppointment() {
-    console.log({
-      filterStatus,
-    });
     setIsLoading(true);
-    const response = await api.get(`/appointments/search/?search=${searchWord}`);
+    const response = await api.get(`/appointments/search/?search=${searchWord}&start_date=${startDateSelected}&end_date=${endDateSelected}&status=${filterStatus}`);
     setAppointments(response.data);
     setIsLoading(false);
   }
@@ -65,6 +70,12 @@ function Appointments() {
     <Container>
       <Title>
         <h2>Solicitações</h2>
+        <span>{format(startDateSelected, 'dd/MM/yyyy', {
+          locale: pt,
+        })} - {format(endDateSelected, 'dd/MM/yyyy', {
+          locale: pt,
+        })}
+        </span>
       </Title>
 
       <Filters>
@@ -79,6 +90,46 @@ function Appointments() {
             <Option key="pedding">Pedente</Option>
             <Option key="finish">Finalizado</Option>
           </Select>
+        </FilterItem>
+
+        <FilterItem>
+          <FilterDate>
+            <button type="button" onClick={() => setShowDatePickerStartDate(!showDatePickerStartDate)}>
+              <MdDateRange size={22} color="#000" />
+              <span>{format(startDateSelected, 'dd/MM/yyyy', {
+                locale: pt,
+              })}
+              </span>
+            </button>
+            <SelectDate showDatePicker={showDatePickerStartDate}>
+              <DayPicker
+                selectedDays={startDateSelected}
+                weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
+                onDayClick={setStartDateSelected}
+                locale={pt}
+              />
+            </SelectDate>
+          </FilterDate>
+        </FilterItem>
+
+        <FilterItem>
+          <FilterDate>
+            <button type="button" onClick={() => setShowDatePickerendDate(!showDatePickerEndDate)}>
+              <MdDateRange size={22} color="#000" />
+              <span>{format(endDateSelected, 'dd/MM/yyyy', {
+                locale: pt,
+              })}
+              </span>
+            </button>
+            <SelectDate showDatePicker={showDatePickerEndDate}>
+              <DayPicker
+                selectedDays={endDateSelected}
+                weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
+                onDayClick={setEndDateSelected}
+                locale={pt}
+              />
+            </SelectDate>
+          </FilterDate>
         </FilterItem>
 
         <FilterItem className="w100">
@@ -141,6 +192,12 @@ function Appointments() {
             )}
           </tbody>
         </Table>
+
+        {
+          isLoading && (
+            <Loading />
+          )
+        }
 
         {!!appointments.length && !searchWord && (
         <Pagination

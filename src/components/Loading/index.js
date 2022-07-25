@@ -4,7 +4,7 @@ import { Container } from './styles';
 
 function Loading() {
   return (
-    <Container>
+    <Container className="load">
       <img src={loading} alt="" />
     </Container>
   );

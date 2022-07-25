@@ -1,5 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 import 'antd/dist/antd.css';
+import 'react-day-picker/lib/style.css';
 
 export default createGlobalStyle`
 
