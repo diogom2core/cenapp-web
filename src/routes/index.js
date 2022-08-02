@@ -1,8 +1,9 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import RouterCustom from './Route';
-
+import AnalystPrivateRoute from './AnalystPrivateRoute';
 import PrivateRoute from './PrivateRoute';
+
 import AppointmentForm from '../pages/AppointmentForm';
 import AdminLogin from '../pages/AdminLogin';
 import AnalystCreate from '../pages/AnalystCreate';
@@ -13,16 +14,20 @@ import Analysts from '../pages/Analysts';
 import AnalystLogin from '../pages/AnalystLogin';
 import AnalystAppointmentsShow from '../pages/AnalystAppointmentsShow';
 import AnalystAppointmentsList from '../pages/AnalystAppointmentsList';
-import AnalystPrivateRoute from './AnalystPrivateRoute';
+import AnalystPasswordForgot from '../pages/AnalystPasswordForgot';
 
 function Routes() {
   return (
     <Switch>
       {/* Public Routes */}
       <Route exact path="/agendamento" component={AppointmentForm} />
-      <Route exact path="/analista/login" component={AnalystLogin} />
-
       <RouterCustom path="/admin/login" component={AdminLogin} />
+      <Route exact path="/analista/login" component={AnalystLogin} />
+      <Route
+        exact
+        path="/analista/recuperacao-senha"
+        component={AnalystPasswordForgot}
+      />
       {/* Private Routes Admin */}
       <PrivateRoute path="/agendamentos" component={Appointments} />
       <PrivateRoute exact path="/" component={Appointments} />

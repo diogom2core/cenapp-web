@@ -11,6 +11,7 @@ import { AppoitmentFinish, Fild, Container, Content, FormBox, Footer, ModalConfi
 import api from '../../services/api';
 import appointmentFinish from '../../assets/appointment_finish.png';
 import Button from '../../components/Button';
+import REGIONS from '../../helpers/regions';
 
 const { Option } = Select;
 const CheckboxGroup = Checkbox.Group;
@@ -50,6 +51,8 @@ function AppointmentForm() {
         patient_one_phone, patient_two_phone,
         kinship, phone } = formValues;
 
+      console.log(sexAnalyst);
+
       await api.post('/appointments', {
         name,
         email,
@@ -63,7 +66,9 @@ function AppointmentForm() {
         cell_phone,
         responsible_appointment,
         responsible_patient,
-        shift: String(checkedList),
+        night_service: checkedList.includes('Noite'),
+        afternoon_service: checkedList.includes('Tarde'),
+        morning_service: checkedList.includes('Manhã'),
         patient_one_name,
         patient_two_name,
         patient_one_birthday,
@@ -338,9 +343,12 @@ function AppointmentForm() {
                             style={{ width: 205 }}
                             onChange={(districtValue) => setDistrict(districtValue)}
                           >
-                            <Option key="barro_01">Bairro 01</Option>
-                            <Option key="barro_02">Bairro 02</Option>
-                            <Option key="barro_03">Bairro 03</Option>
+                            {
+                              REGIONS.map(region => (
+                                <Option key={region}>{region}</Option>
+
+                              ))
+                            }
                           </Select>
                         </Fild>
                       )

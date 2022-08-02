@@ -71,7 +71,7 @@ function AnalystLogin() {
               >
                 Entrar
               </Button>
-              <Link to="/passwords/forgot">Esqueci minha senha</Link>
+              <Link to="/analista/recuperacao-senha">Esqueci minha senha</Link>
             </Form>
           )}
         </Formik>
