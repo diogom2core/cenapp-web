@@ -16,7 +16,9 @@ export default createGlobalStyle`
   body {
     -webkit-font-smoothing: antialiased;
     background: #F6F5F8;
+    height: 100%;
   }
+
 
   body, input, button {
     font-family: 'Montserrat', sans-serif;

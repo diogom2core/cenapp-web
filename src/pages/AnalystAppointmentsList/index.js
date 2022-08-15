@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/jsx-one-expression-per-line */
 import { Select } from 'antd';
-import { addDays, format, parseISO } from 'date-fns';
+import { format, parseISO, subDays } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MdDateRange, MdVisibility } from 'react-icons/md';
@@ -21,8 +21,8 @@ function AnalystAppointmentsList() {
 
   const [filterStatus, setFilterStatus] = useState('');
 
-  const [startDateSelected, setStartDateSelected] = useState(new Date());
-  const [endDateSelected, setEndDateSelected] = useState(addDays(new Date(), 30));
+  const [startDateSelected, setStartDateSelected] = useState(subDays(new Date(), 30));
+  const [endDateSelected, setEndDateSelected] = useState(new Date());
   const [showDatePickerStartDate, setShowDatePickerStartDate] = useState(false);
   const [showDatePickerEndDate, setShowDatePickerendDate] = useState(false);
 
@@ -55,6 +55,17 @@ function AnalystAppointmentsList() {
   function clearSearch() {
     setSearchWord('');
     loadAppointments();
+  }
+
+  function getStatusName(statusName) {
+    switch (statusName) {
+      case 'pedding':
+        return 'Pendente';
+      case 'scheduled':
+        return 'Agendado';
+      default:
+        return '';
+    }
   }
 
   return (
@@ -162,7 +173,7 @@ function AnalystAppointmentsList() {
               <tr key={appointment.id}>
                 <td>{appointment.name}</td>
                 <td>{appointment.email}</td>
-                <td>{appointment.status}</td>
+                <td>{getStatusName(appointment.status)}</td>
                 <td>{format(parseISO(appointment.created_at), 'dd/MM/yyyy')}</td>
                 <td>
                   <Link to={`/analista/solicitacao/${appointment.id}`}>
