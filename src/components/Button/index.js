@@ -3,9 +3,21 @@ import React from 'react';
 import { Container } from './styles';
 import loadingImage from '../../assets/loading.svg';
 
-function Button({ children, loading, disable, width, height, color, type }) {
+function Button({
+  children,
+  loading,
+  disable,
+  width,
+  height,
+  color,
+  type,
+  className,
+  onClick,
+}) {
   return (
     <Container
+      onClick={onClick}
+      className={className}
       type={type}
       disable={disable}
       loading={loading}

@@ -11,6 +11,8 @@ import pt from 'date-fns/locale/pt';
 import api from '../../services/api';
 import { Container, Table, Form, Title, Filters, FilterItem, SelectDate, FilterDate } from './styles';
 import Loading from '../../components/Loading';
+import getStatusName from '../../helpers/getStatusName';
+import statusTitle from '../../helpers/statusTitle';
 
 const { Option } = Select;
 
@@ -57,17 +59,6 @@ function AnalystAppointmentsList() {
     loadAppointments();
   }
 
-  function getStatusName(statusName) {
-    switch (statusName) {
-      case 'pedding':
-        return 'Pendente';
-      case 'scheduled':
-        return 'Agendado';
-      default:
-        return '';
-    }
-  }
-
   return (
     <Container>
       <Title>
@@ -89,8 +80,11 @@ function AnalystAppointmentsList() {
             onChange={(statusValue) => setFilterStatus(statusValue)}
           >
             <Option key="null">Todos</Option>
-            <Option key="pedding">Pedente</Option>
-            <Option key="finish">Finalizado</Option>
+            {
+              statusTitle.map(statusName => (
+                <Option key={statusName}>{getStatusName(statusName)}</Option>
+              ))
+            }
           </Select>
         </FilterItem>
 
