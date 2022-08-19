@@ -14,6 +14,8 @@ function getStatusName(statusName) {
       return 'Iniciou atendimento';
     case 'not_service_started':
       return 'Não Iniciou atendimento';
+    case 'expired':
+      return 'Expirado';
     default:
       return '';
   }
