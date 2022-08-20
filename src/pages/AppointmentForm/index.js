@@ -21,6 +21,7 @@ function AppointmentForm() {
   const [initialValues] = useState({
     name: '',
     email: '',
+    bond_spbsb_name: '',
   });
   const [district, setDistrict] = useState('');
   const [modality, setModality] = useState('');
@@ -49,9 +50,7 @@ function AppointmentForm() {
         patient_one_name, patient_two_name,
         patient_one_birthday, patient_two_birthday,
         patient_one_phone, patient_two_phone,
-        kinship, phone } = formValues;
-
-      console.log(sexAnalyst);
+        kinship, phone, bond_spbsb_name } = formValues;
 
       await api.post('/appointments', {
         name,
@@ -77,6 +76,7 @@ function AppointmentForm() {
         patient_two_phone,
         kinship,
         phone,
+        bond_spbsb_name,
       });
 
       setLoading(false);
@@ -124,46 +124,51 @@ function AppointmentForm() {
   return (
     <Container>
       <Content>
+
         {
           !isAppoitmentFinish && (
             <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+
               {() => (
-                <Form>
-                  <h3>Agendamento</h3>
+                <>
 
-                  <FormBox>
-                    <h3> Atendimento</h3>
+                  <h3>Formulário de Agendamento</h3>
 
-                    <div className="form_box_main">
-                      <div>
-                        <Fild>
-                          <label htmlFor="type_of_service">Tipo de Atendimento</label>
-                          <Select
-                            id="type_of_service"
-                            defaultValue="Modalidade de atendimento"
-                            style={{ width: 205 }}
-                            onChange={(serviceTypeValue) =>
-                              setServiceType(serviceTypeValue)}
-                          >
-                            <Option key="adultos">Adultos</Option>
-                            <Option key="idosos">Idosos</Option>
-                            <Option key="criancas">Crianças</Option>
-                            <Option key="adolecente">Adolecente</Option>
-                            <Option key="casal">Casal</Option>
-                            <Option key="familia">Família</Option>
-                            <Option key="interverncoes">Intervernções Precoce</Option>
-                          </Select>
-                        </Fild>
+                  <Form>
+
+                    <FormBox>
+                      <h3> Atendimento</h3>
+
+                      <div className="form_box_main">
+                        <div>
+                          <Fild>
+                            <label htmlFor="type_of_service">Tipo de Atendimento</label>
+                            <Select
+                              id="type_of_service"
+                              defaultValue="Modalidade de atendimento"
+                              style={{ width: 205 }}
+                              onChange={(serviceTypeValue) =>
+                                setServiceType(serviceTypeValue)}
+                            >
+                              <Option key="adultos">Adultos</Option>
+                              <Option key="idosos">Idosos</Option>
+                              <Option key="criancas">Crianças</Option>
+                              <Option key="adolecentes">Adolecente</Option>
+                              <Option key="casais">Casal</Option>
+                              <Option key="familias">Família</Option>
+                              <Option key="interverncoes">Intervernções Precoce</Option>
+                            </Select>
+                          </Fild>
+                        </div>
+
+                        <div className="text_helper">
+                          {getServiceTypeMessage(serviceType)}
+                        </div>
                       </div>
 
-                      <div>
-                        {getServiceTypeMessage(serviceType)}
-                      </div>
-                    </div>
-
-                    <div className="conditional_inputs">
-                      {
-                        (serviceType === 'adolecente' || serviceType === 'criancas' || serviceType === 'interverncoes') && (
+                      <div className="conditional_inputs">
+                        {
+                        (serviceType === 'adolecentes' || serviceType === 'criancas' || serviceType === 'interverncoes') && (
                           <>
                             <Fild>
                               <label htmlFor="name">Responsável pela solicitação</label>
@@ -183,8 +188,8 @@ function AppointmentForm() {
                         )
                        }
 
-                      {
-                        serviceType === 'casal' && (
+                        {
+                        serviceType === 'casais' && (
                           <>
                             <Fild>
                               <label htmlFor="name">Nome do paciente 01</label>
@@ -218,121 +223,130 @@ function AppointmentForm() {
                           </>
                         )
                        }
-                    </div>
+                      </div>
 
-                  </FormBox>
+                    </FormBox>
 
-                  <FormBox>
-                    <h3>Informações do paciente</h3>
+                    <FormBox>
+                      <h3>Informações do paciente</h3>
 
-                    <div className="conditional_inputs">
-                      <Fild>
-                        <label htmlFor="name">Nome</label>
-                        <Field id="name" name="name" placeholder="Nome" />
-                      </Fild>
+                      <div className="conditional_inputs">
+                        <Fild>
+                          <label htmlFor="name">Nome</label>
+                          <Field id="name" name="name" placeholder="Nome" />
+                        </Fild>
 
-                      <Fild>
-                        <label htmlFor="email">E-mail</label>
-                        <Field id="email" name="email" placeholder="E-mail" />
-                      </Fild>
+                        <Fild>
+                          <label htmlFor="email">E-mail</label>
+                          <Field id="email" name="email" placeholder="E-mail" />
+                        </Fild>
 
-                      <Fild>
-                        <label htmlFor="email">Data de nascimento</label>
-                        <Field id="email" name="birthday" placeholder="Data de nascimento" />
-                      </Fild>
+                        <Fild>
+                          <label htmlFor="email">Data de nascimento</label>
+                          <Field id="email" name="birthday" placeholder="Data de nascimento" />
+                        </Fild>
 
-                      <Fild>
-                        <label htmlFor="sex">Sexo</label>
-                        <Select
-                          id="sex"
-                          defaultValue="Sexo"
-                          style={{ width: 205 }}
-                          onChange={(sexValue) => setSex(sexValue)}
-                        >
-                          <Option key="m">Masculino</Option>
-                          <Option key="f">Feminino</Option>
-                        </Select>
-                      </Fild>
+                        <Fild>
+                          <label htmlFor="sex">Sexo</label>
+                          <Select
+                            id="sex"
+                            defaultValue="Sexo"
+                            style={{ width: 205 }}
+                            onChange={(sexValue) => setSex(sexValue)}
+                          >
+                            <Option key="m">Masculino</Option>
+                            <Option key="f">Feminino</Option>
+                          </Select>
+                        </Fild>
 
-                      <Fild>
-                        <label htmlFor="email">Telefone celular</label>
-                        <Field id="email" name="cell_phone" placeholder="Telefone celular" />
-                      </Fild>
+                        <Fild>
+                          <label htmlFor="email">Telefone celular</label>
+                          <Field id="email" name="cell_phone" placeholder="Telefone celular" />
+                        </Fild>
 
-                      <Fild>
-                        <label htmlFor="email">Telefone fixo</label>
-                        <Field id="email" name="phone" placeholder="Telefone fixo" />
-                      </Fild>
-                    </div>
-                  </FormBox>
+                        <Fild>
+                          <label htmlFor="email">Telefone fixo</label>
+                          <Field id="email" name="phone" placeholder="Telefone fixo" />
+                        </Fild>
+                      </div>
+                    </FormBox>
 
-                  <FormBox>
-                    <h3>Preferências do atendimento</h3>
+                    <FormBox>
+                      <h3>Preferências do atendimento</h3>
 
-                    <div className="conditional_inputs">
-                      <Fild>
-                        <label htmlFor="period">Tem vínculo com algum membro da SPBsb?</label>
+                      <div className="conditional_inputs">
+                        <Fild>
+                          <label htmlFor="period">Tem vínculo com algum membro da SPBsb?</label>
 
-                        <Radio.Group
-                          onChange={(event) => setHasAssociationSPBSB(event.target.value)}
-                          value={hasAssociationSPBSB}
-                        >
-                          <Radio value={false}>Não</Radio>
-                          <Radio value>Sim</Radio>
-                        </Radio.Group>
-                      </Fild>
+                          <Radio.Group
+                            onChange={(event) => setHasAssociationSPBSB(event.target.value)}
+                            value={hasAssociationSPBSB}
+                          >
+                            <Radio value={false}>Não</Radio>
+                            <Radio value>Sim</Radio>
+                          </Radio.Group>
+                        </Fild>
 
-                      <Fild>
-                        <label htmlFor="period">Primeira inscrição no cenapp?</label>
+                        <Fild>
+                          <label htmlFor="period">Primeira inscrição no cenapp?</label>
 
-                        <Radio.Group
-                          onChange={(event) => setFisrtSubscription(event.target.value)}
-                          value={fisrtSubscription}
-                        >
-                          <Radio value={false}>Não</Radio>
-                          <Radio value>Sim</Radio>
-                        </Radio.Group>
-                      </Fild>
+                          <Radio.Group
+                            onChange={(event) => setFisrtSubscription(event.target.value)}
+                            value={fisrtSubscription}
+                          >
+                            <Radio value={false}>Não</Radio>
+                            <Radio value>Sim</Radio>
+                          </Radio.Group>
+                        </Fild>
 
-                      <Fild>
-                        <label htmlFor="sex">Sexo do Analísta</label>
-                        <Select
-                          id="sex"
-                          defaultValue="Sexo do analista"
-                          style={{ width: 205 }}
-                          onChange={(sexValue) => setSexAnalyst(sexValue)}
-                        >
-                          <Option key="m">Homem</Option>
-                          <Option key="f">Mulher</Option>
-                          <Option key="i">Indiferente</Option>
-                        </Select>
-                      </Fild>
+                        {
+                        hasAssociationSPBSB && (
+                          <Fild>
+                            <label htmlFor="bond_spbsb_name">Nome do membro SPBsb</label>
+                            <Field id="bond_spbsb_name" name="bond_spbsb_name" placeholder="nome do membro" />
+                          </Fild>
+                        )
+                      }
 
-                      <Fild>
-                        <label htmlFor="period">Qual o melhor horário para atendimento? (pode marcar mais de uma)*</label>
+                        <Fild>
+                          <label htmlFor="sex">Sexo do Analísta</label>
+                          <Select
+                            id="sex"
+                            defaultValue="Sexo do analista"
+                            style={{ width: 205 }}
+                            onChange={(sexValue) => setSexAnalyst(sexValue)}
+                          >
+                            <Option key="m">Homem</Option>
+                            <Option key="f">Mulher</Option>
+                            <Option key="i">Indiferente</Option>
+                          </Select>
+                        </Fild>
 
-                        <CheckboxGroup
-                          options={plainOptions}
-                          value={checkedList}
-                          onChange={(list) => setCheckedList(list)}
-                        />
-                      </Fild>
+                        <Fild>
+                          <label htmlFor="period">Qual o melhor horário para atendimento? (pode marcar mais de uma)*</label>
 
-                      <Fild>
-                        <label htmlFor="modality">Modalidade de Atendimento</label>
-                        <Select
-                          id="modality"
-                          defaultValue="Modalidade de atendimento"
-                          style={{ width: 205 }}
-                          onChange={(modalityValue) => setModality(modalityValue)}
-                        >
-                          <Option key="presencial">Presencial</Option>
-                          <Option key="online">Online</Option>
-                          <Option key="indiferente">Indiferente</Option>
-                        </Select>
-                      </Fild>
+                          <CheckboxGroup
+                            options={plainOptions}
+                            value={checkedList}
+                            onChange={(list) => setCheckedList(list)}
+                          />
+                        </Fild>
 
-                      {
+                        <Fild>
+                          <label htmlFor="modality">Modalidade de Atendimento</label>
+                          <Select
+                            id="modality"
+                            defaultValue="Modalidade de atendimento"
+                            style={{ width: 205 }}
+                            onChange={(modalityValue) => setModality(modalityValue)}
+                          >
+                            <Option key="presencial">Presencial</Option>
+                            <Option key="online">Online</Option>
+                            <Option key="indiferente">Indiferente</Option>
+                          </Select>
+                        </Fild>
+
+                        {
                       modality && modality !== 'online' && (
                         <Fild>
                           <label htmlFor="district">Bairro</label>
@@ -353,13 +367,14 @@ function AppointmentForm() {
                         </Fild>
                       )
                     }
-                    </div>
-                  </FormBox>
+                      </div>
+                    </FormBox>
 
-                  <Button width={340} type="submit" loading={loading}>
-                    Continuar
-                  </Button>
-                </Form>
+                    <Button width={340} type="submit" loading={loading}>
+                      Continuar
+                    </Button>
+                  </Form>
+                </>
               )}
             </Formik>
           )

@@ -52,12 +52,10 @@ function AppointmentsRead() {
           response.data.afternoon_service,
           response.data.morning_service,
         ),
-        analyst_name:
-          response.data.user_analyst && response.data.user_analyst.name,
-        analyst_email:
-          response.data.user_analyst && response.data.user_analyst.email,
+        analyst_name: response.data.analyst && response.data.analyst.name,
+        analyst_email: response.data.analyst && response.data.analyst.email,
       });
-      setAnalyst(response.data.user_analyst);
+      setAnalyst(response.data.analyst);
       setLoading(false);
     } catch (error) {
       toast.error('Erro ao carregar solicitação');

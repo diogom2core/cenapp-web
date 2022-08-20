@@ -23,24 +23,27 @@ export const Content = styled.div`
   background: #fff;
   border-radius: 7px;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-  padding: 50px;
 
   @media (max-width: 500px) {
     padding: 50px 30px;
+  }
+
+  > h3 {
+    background: #40d4c3;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 60px;
+    color: #fff;
+    text-transform: uppercase;
+    padding: 7px;
   }
 
   form {
     max-width: 800px;
     width: 100%;
     margin: 0 auto;
-
-    > h3 {
-      text-align: center;
-      font-size: 24px;
-      font-weight: 500;
-      margin-bottom: 60px;
-      color: #000;
-    }
+    padding: 0 30px 30px 30px;
 
     button {
       width: 300px;
@@ -156,7 +159,16 @@ export const FormBox = styled.div`
     display: flex;
     margin-bottom: 20px;
     div {
-      width: 50%;
+      width: 40%;
+    }
+
+    .text_helper {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 26px;
+      box-shadow: rgba(64, 212, 195, 0.3) 0px 1px 2px 0px,
+        rgba(64, 212, 195, 0.3) 0px 2px 6px 2px;
     }
 
     @media (max-width: 500px) {
