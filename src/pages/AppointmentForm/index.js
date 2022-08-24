@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable prettier/prettier */
 import { Field, Form, Formik } from 'formik';
@@ -7,11 +8,13 @@ import { MdClose } from 'react-icons/md';
 import { Select, Radio, Checkbox, Divider } from 'antd';
 import { toast } from 'react-toastify';
 
+import MaskedInput from 'react-text-mask';
 import { AppoitmentFinish, Fild, Container, Content, FormBox, Footer, ModalConfirm } from './styles';
 import api from '../../services/api';
 import appointmentFinish from '../../assets/appointment_finish.png';
 import Button from '../../components/Button';
 import REGIONS from '../../helpers/regions';
+import { birthdayMask, phoneNumberMask, residentialNumberMask } from '../../helpers/masks';
 
 const { Option } = Select;
 const CheckboxGroup = Checkbox.Group;
@@ -129,7 +132,12 @@ function AppointmentForm() {
           !isAppoitmentFinish && (
             <Formik initialValues={initialValues} onSubmit={handleSubmit}>
 
-              {() => (
+              {({
+                touched,
+                errors,
+                handleChange,
+                handleBlur,
+              }) => (
                 <>
 
                   <h3>Formulário de Agendamento</h3>
@@ -202,23 +210,97 @@ function AppointmentForm() {
                             </Fild>
 
                             <Fild>
-                              <label htmlFor="name">Nascimento do paciente 01</label>
-                              <Field id="name" name="patient_one_birthday" placeholder="Nascimento do paciente 01;" />
+                              <label htmlFor="patient_one_birthday">Nascimento do paciente 01</label>
+                              <Field
+                                name="patient_one_birthday"
+                                render={({ field }) => (
+                                  <MaskedInput
+                                    {...field}
+                                    mask={birthdayMask}
+                                    id="patient_one_birthday"
+                                    placeholder="Nascimento do paciente 01"
+                                    type="text"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    className={
+                                    errors.birthdayMask && touched.birthdayMask
+                                      ? 'text-input error'
+                                      : 'text-input'
+                                    }
+                                  />
+                                )}
+                              />
                             </Fild>
 
                             <Fild>
-                              <label htmlFor="name">Nascimento do paciente 02</label>
-                              <Field id="name" name="patient_two_birthday" placeholder="Nascimento do paciente 02" />
+                              <label htmlFor="patient_two_birthday">Nascimento do paciente 02</label>
+                              <Field
+                                id="patient_two_birthday"
+                                name="patient_two_birthday"
+                                render={({ field }) => (
+                                  <MaskedInput
+                                    {...field}
+                                    mask={birthdayMask}
+                                    id="patient_two_birthday"
+                                    placeholder="Nascimento do paciente 02"
+                                    type="text"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    className={
+                                    errors.patient_two_birthday && touched.patient_two_birthday
+                                      ? 'text-input error'
+                                      : 'text-input'
+                                    }
+                                  />
+                                )}
+                              />
                             </Fild>
 
                             <Fild>
-                              <label htmlFor="name">Telefone do paciente 01</label>
-                              <Field id="name" name="patient_one_phone" placeholder="Telefone do paciente 01" />
+                              <label htmlFor="patient_one_phone">Telefone do paciente 01</label>
+                              <Field
+                                id="patient_one_phone"
+                                name="patient_one_phone"
+                                render={({ field }) => (
+                                  <MaskedInput
+                                    {...field}
+                                    mask={phoneNumberMask}
+                                    id="patient_one_phone"
+                                    placeholder="Telefone do paciente 01"
+                                    type="text"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    className={
+                                    errors.patient_one_phone && touched.patient_one_phone
+                                      ? 'text-input error'
+                                      : 'text-input'
+                                    }
+                                  />
+                                )}
+                              />
                             </Fild>
 
                             <Fild>
-                              <label htmlFor="name">Telefone do paciente 01</label>
-                              <Field id="name" name="patient_two_phone" placeholder="Telefone do paciente 01" />
+                              <label htmlFor="patient_two_phone">Telefone do paciente 02</label>
+                              <Field
+                                name="patient_two_phone"
+                                render={({ field }) => (
+                                  <MaskedInput
+                                    {...field}
+                                    mask={phoneNumberMask}
+                                    id="patient_two_phone"
+                                    placeholder="Telefone do paciente 02"
+                                    type="text"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    className={
+                                    errors.patient_two_phone && touched.patient_two_birthday
+                                      ? 'text-input error'
+                                      : 'text-input'
+                                    }
+                                  />
+                                )}
+                              />
                             </Fild>
                           </>
                         )
@@ -242,8 +324,27 @@ function AppointmentForm() {
                         </Fild>
 
                         <Fild>
-                          <label htmlFor="email">Data de nascimento</label>
-                          <Field id="email" name="birthday" placeholder="Data de nascimento" />
+                          <label htmlFor="birthday">Data de nascimento</label>
+                          <Field
+                            name="birthday"
+                            render={({ field }) => (
+                              <MaskedInput
+                                {...field}
+                                mask={birthdayMask}
+                                id="birthday"
+                                placeholder="Data de nascimento"
+                                type="text"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                className={
+                      errors.birthday && touched.birthday
+                        ? 'text-input error'
+                        : 'text-input'
+                    }
+                              />
+                            )}
+                          />
+
                         </Fild>
 
                         <Fild>
@@ -260,13 +361,50 @@ function AppointmentForm() {
                         </Fild>
 
                         <Fild>
-                          <label htmlFor="email">Telefone celular</label>
-                          <Field id="email" name="cell_phone" placeholder="Telefone celular" />
+                          <label htmlFor="cell_phone">Telefone celular</label>
+                          <Field
+                            name="cell_phone"
+                            render={({ field }) => (
+                              <MaskedInput
+                                {...field}
+                                id="cell_phone"
+                                name="cell_phone"
+                                mask={phoneNumberMask}
+                                placeholder="Telefone celular"
+                                type="text"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                className={
+                                                errors.cell_phone && touched.cell_phone
+                                                  ? 'text-input error'
+                                                  : 'text-input'
+                                              }
+                              />
+                            )}
+                          />
                         </Fild>
 
                         <Fild>
-                          <label htmlFor="email">Telefone fixo</label>
-                          <Field id="email" name="phone" placeholder="Telefone fixo" />
+                          <label htmlFor="phone">Telefone fixo</label>
+                          <Field
+                            name="phone"
+                            render={({ field }) => (
+                              <MaskedInput
+                                {...field}
+                                id="email"
+                                mask={residentialNumberMask}
+                                placeholder="Telefone fixo"
+                                type="text"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                className={
+                                errors.phone && touched.phone
+                                  ? 'text-input error'
+                                  : 'text-input'
+                                }
+                              />
+                            )}
+                          />
                         </Fild>
                       </div>
                     </FormBox>
