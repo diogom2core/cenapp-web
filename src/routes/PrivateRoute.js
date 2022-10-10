@@ -9,7 +9,6 @@ import { useAuth } from '../hooks/AuthContext';
 
 function PrivateRoute({ isPublic, component: Component, ...rest }) {
   const { user } = useAuth();
-  console.log('user', user);
   return (
     <Route
       {...rest}

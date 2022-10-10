@@ -48,7 +48,6 @@ function AnalystAppointmentsRead() {
   const loadAppointment = async () => {
     try {
       const response = await api.get(`/appointments/read/${appointment_id}`);
-      console.log(response.data);
       setStatus(response.data.status);
       setInitialValues({
         ...response.data,

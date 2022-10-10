@@ -1,12 +1,23 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable react/jsx-no-bind */
+/* eslint-disable function-paren-newline */
+import React, { useCallback, useEffect, useState } from 'react';
 import { Field, Form, Formik } from 'formik';
 import { Row } from 'antd';
+import { MdClose } from 'react-icons/md';
+import Select from 'react-select';
 
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Container, BoxVisualization, Column } from './styles';
+import {
+  Container,
+  BoxVisualization,
+  Column,
+  ButtonContainer,
+  ModalConfirm,
+} from './styles';
 import api from '../../services/api';
 import Loading from '../../components/Loading';
+import Button from '../../components/Button';
 
 function AppointmentsRead() {
   const [initialValues, setInitialValues] = useState({
@@ -23,6 +34,13 @@ function AppointmentsRead() {
   const [loading, setLoading] = useState(true);
   const { appointment_id } = useParams();
   const [analyst, setAnalyst] = useState(null);
+  const [isModalManualAppointmentOpen, setIsModalManualAppointmentOpen] =
+    useState(false);
+  const [analysts, setAnalysts] = useState();
+  const [isLoadAnalysts, setIsLoadAnalysts] = useState(false);
+  const [analystSelected, setAnalystSelected] = useState('');
+
+  const history = useHistory();
 
   function getShift(night_service, afternoon_service, morning_service) {
     const shiftResult = [];
@@ -63,9 +81,40 @@ function AppointmentsRead() {
     }
   };
 
+  const loadAnalysts = async () => {
+    setIsLoadAnalysts(true);
+    const analystsResponse = await api.get('/admin/analyst/');
+    setIsLoadAnalysts(true);
+    setAnalysts(
+      analystsResponse.data.map((analystFilter) => ({
+        value: analystFilter.id,
+        label: analystFilter.name,
+      })),
+    );
+    setIsLoadAnalysts(false);
+  };
+
   useEffect(() => {
     loadAppointment();
+    loadAnalysts();
   }, []);
+
+  const handleChange = (newValue) => {
+    setAnalystSelected(newValue);
+  };
+
+  const manualAppoitment = useCallback(async () => {
+    try {
+      await api.post('/admin/analyst/manual-appoitment', {
+        appointment_id,
+        analyst_id: analystSelected.value,
+      });
+      toast.success('Agendado com sucesso');
+      history.goBack();
+    } catch (error) {
+      toast.error('Erro ao agendar manualmente');
+    }
+  }, [analystSelected]);
 
   return (
     <Container>
@@ -152,10 +201,49 @@ function AppointmentsRead() {
               </Form>
             )}
           </Formik>
+
+          <ButtonContainer>
+            <Button
+              color="#40d4c3"
+              width={320}
+              onClick={() => setIsModalManualAppointmentOpen(true)}
+            >
+              Agendamento manual
+            </Button>
+          </ButtonContainer>
         </BoxVisualization>
       )}
 
       {loading && <Loading />}
+
+      <ModalConfirm open={isModalManualAppointmentOpen}>
+        <div className="content">
+          <div className="content-header">
+            <button type="button">
+              <MdClose
+                size={20}
+                color="#3a3a3a"
+                onClick={() => setIsModalManualAppointmentOpen(false)}
+              />
+            </button>
+          </div>
+
+          <p>Selecione uma analista para fazer o agendamento manual</p>
+
+          {!isLoadAnalysts && (
+            <Select options={analysts} onChange={handleChange} />
+          )}
+
+          <footer className="content-footer">
+            <span onClick={() => setIsModalManualAppointmentOpen(false)}>
+              Cancelar
+            </span>
+            <button type="button" onClick={manualAppoitment}>
+              Confirmar
+            </button>
+          </footer>
+        </div>
+      </ModalConfirm>
     </Container>
   );
 }
