@@ -583,7 +583,7 @@ function AppointmentForm() {
         }
 
         {
-          // Agendamento enviado
+          // Agendamento enviados
           isAppoitmentFinish && (
             <AppoitmentFinish>
               <img src={appointmentFinish} alt="" />
