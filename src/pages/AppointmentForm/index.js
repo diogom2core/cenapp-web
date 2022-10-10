@@ -1,8 +1,9 @@
+/* eslint-disable consistent-return */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable prettier/prettier */
 import { Field, Form, Formik } from 'formik';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { MdClose } from 'react-icons/md';
 
 import { Select, Radio, Checkbox, Divider } from 'antd';
@@ -13,7 +14,6 @@ import { AppoitmentFinish, Fild, Container, Content, FormBox, Footer, ModalConfi
 import api from '../../services/api';
 import appointmentFinish from '../../assets/appointment_finish.png';
 import Button from '../../components/Button';
-import REGIONS from '../../helpers/regions';
 import { birthdayMask, phoneNumberMask, residentialNumberMask } from '../../helpers/masks';
 
 const { Option } = Select;
@@ -37,14 +37,16 @@ function AppointmentForm() {
   const [fisrtSubscription, setFisrtSubscription] = useState(false);
   const [checkedList, setCheckedList] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenModalAnalystAvailable, setIsOpenModalAnalystAvailable] = useState(false);
   const [formValues, setFormValues] = useState();
+  const [districtsToSelect, setDistrictsToSelect] = useState([]);
 
   async function handleSubmit(values) {
     setIsOpen(true);
     setFormValues(values);
   }
 
-  const sendAppointment = useCallback(async () => {
+  const sendAppointment = useCallback(async (type) => {
     try {
       setLoading(true);
 
@@ -54,6 +56,41 @@ function AppointmentForm() {
         patient_one_birthday, patient_two_birthday,
         patient_one_phone, patient_two_phone,
         kinship, phone, bond_spbsb_name } = formValues;
+
+      if (type === 'verify') {
+        const appointmentResponse = await api.post('/appointments/verify-analyst-available', {
+          name,
+          email,
+          district,
+          analyst_sex: sexAnalyst,
+          service_modality: modality,
+          service_type: serviceType,
+          sex,
+          birthday,
+          bond_patient,
+          cell_phone,
+          responsible_appointment,
+          responsible_patient,
+          night_service: checkedList.includes('Noite'),
+          afternoon_service: checkedList.includes('Tarde'),
+          morning_service: checkedList.includes('Manhã'),
+          patient_one_name,
+          patient_two_name,
+          patient_one_birthday,
+          patient_two_birthday,
+          patient_one_phone,
+          patient_two_phone,
+          kinship,
+          phone,
+          bond_spbsb_name,
+        });
+
+        if (!appointmentResponse.data.have_analyst_available) {
+          setIsOpen(false);
+          setIsOpenModalAnalystAvailable(true);
+          return;
+        }
+      }
 
       await api.post('/appointments', {
         name,
@@ -87,6 +124,7 @@ function AppointmentForm() {
       toast.success('Agendamento feito com sucesso!');
       setIsAppoitmentFinish(true);
       setIsOpen(false);
+      setIsOpenModalAnalystAvailable(false);
     } catch (err) {
       const { message } = JSON.parse(err.request.responseText);
       toast.error(`Error ao cadastrar:  ${message}`);
@@ -123,6 +161,15 @@ function AppointmentForm() {
         return 'Selecione o tipo de serviço';
     }
   }
+
+  async function getDistricts() {
+    const response = await api.get('/analysts/analyst-districts');
+    setDistrictsToSelect(response.data);
+  }
+
+  useEffect(() => {
+    getDistricts();
+  }, []);
 
   return (
     <Container>
@@ -496,10 +543,11 @@ function AppointmentForm() {
                             onChange={(districtValue) => setDistrict(districtValue)}
                           >
                             {
-                              REGIONS.map(region => (
-                                <Option key={region}>{region}</Option>
-
-                              ))
+                              !!districtsToSelect.length && (
+                                districtsToSelect.map(region => (
+                                  <Option key={region}>{region}</Option>
+                                ))
+                              )
                             }
                           </Select>
                         </Fild>
@@ -519,6 +567,7 @@ function AppointmentForm() {
         }
 
         {
+          // Confirmação de agendamento
           !appointmentFinish && (
             <>
               <Divider />
@@ -534,6 +583,7 @@ function AppointmentForm() {
         }
 
         {
+          // Agendamento enviado
           isAppoitmentFinish && (
             <AppoitmentFinish>
               <img src={appointmentFinish} alt="" />
@@ -592,6 +642,41 @@ function AppointmentForm() {
 
             <footer className="content-footer">
               <span onClick={() => setIsOpen(false)}>Cancelar</span>
+              <button type="button" onClick={() => sendAppointment('verify')}>
+                Confirmar
+              </button>
+            </footer>
+          </div>
+        </ModalConfirm>
+
+        <ModalConfirm open={isOpenModalAnalystAvailable}>
+          <div className="content">
+            <div className="content-header">
+              <button type="button">
+                <MdClose
+                  size={20}
+                  color="#3a3a3a"
+                  onClick={() => setIsOpenModalAnalystAvailable(false)}
+                />
+              </button>
+            </div>
+
+            <div>
+              <strong>Atenção</strong>
+              <p>
+                Não foi encontrado nenhum analista com os requisitos desejados.
+              </p>
+              <p>Você pode:</p>
+              <p>
+                1. Rever critérios do agendamento
+              </p>
+              <p>
+                2. Aguardar a disponibilidade de um analista (período de 1 mês)
+              </p>
+            </div>
+
+            <footer className="content-footer">
+              <span onClick={() => setIsOpenModalAnalystAvailable(false)}>Rever critérios</span>
               <button type="button" onClick={sendAppointment}>
                 Confirmar
               </button>

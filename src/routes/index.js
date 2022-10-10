@@ -15,6 +15,7 @@ import AnalystLogin from '../pages/AnalystLogin';
 import AnalystAppointmentsShow from '../pages/AnalystAppointmentsShow';
 import AnalystAppointmentsList from '../pages/AnalystAppointmentsList';
 import AnalystPasswordForgot from '../pages/AnalystPasswordForgot';
+import AdminAnalystUpdate from '../pages/AdminAnalystUpdate';
 
 function Routes() {
   return (
@@ -41,6 +42,11 @@ function Routes() {
         exact
         path="/solicitacoes/ver/:appointment_id"
         component={AppointmentsRead}
+      />
+      <PrivateRoute
+        exact
+        path="/admin/analistas/editar/:analyst_id"
+        component={AdminAnalystUpdate}
       />
 
       {/* Private Routes Analyst */}

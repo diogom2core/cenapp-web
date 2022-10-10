@@ -4,9 +4,17 @@ import { format, parseISO } from 'date-fns';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Select } from 'antd';
+import {
+  MdClose,
+  MdModeEditOutline,
+} from 'react-icons/md';
+import {
+  IoTrashBinSharp,
+} from 'react-icons/io5';
 
+import { toast } from 'react-toastify';
 import api from '../../services/api';
-import { Container, Table, Form, Pagination, Title, Filters, FilterItem } from './styles';
+import { Container, Table, Form, Pagination, Title, Filters, FilterItem, ModalConfirm } from './styles';
 import Loading from '../../components/Loading';
 import REGIONS from '../../helpers/regions';
 
@@ -21,6 +29,9 @@ function AnalystList() {
   const [district, setDistrict] = useState('');
   const [modality, setModality] = useState('');
   const [sex, setSex] = useState('');
+
+  const [isModalRemoveAnalystOpen, setIsModalRemoveAnalystOpen] = useState(false);
+  const [analystIDToRemove, setAnalystIDToRemove] = useState('');
 
   async function loadAnalysts() {
     setIsLoading(true);
@@ -61,6 +72,25 @@ function AnalystList() {
   function clearSearch() {
     loadAnalysts();
     setSearchWord('');
+  }
+
+  const removeAnalyst = useCallback(async () => {
+    try {
+      await api.delete(`/admin/analyst/${analystIDToRemove}`);
+
+      setIsModalRemoveAnalystOpen(false);
+      loadAnalysts();
+      toast.success('Analista removido com sucesso!');
+    } catch (error) {
+      toast.error('Error ao remover analista');
+    } finally {
+      setIsModalRemoveAnalystOpen(false);
+    }
+  }, [analystIDToRemove]);
+
+  function openModalRemoveAnalyst(analyst_id) {
+    setIsModalRemoveAnalystOpen(true);
+    setAnalystIDToRemove(analyst_id);
   }
 
   return (
@@ -160,9 +190,8 @@ function AnalystList() {
               <td>Email</td>
               <td>Barrio</td>
               <td>Modalidade</td>
-              <td>Sexo</td>
-              <td>Turno</td>
               <td>Última Atualização</td>
+              <td>Ações</td>
             </tr>
           </thead>
           <tbody>
@@ -173,9 +202,25 @@ function AnalystList() {
                   <td>{analyst.email}</td>
                   <td>{analyst.district}</td>
                   <td>{analyst.service_modality}</td>
-                  <td>{analyst.sex}</td>
-                  <td>{analyst.shift}</td>
                   <td>{format(parseISO(analyst.created_at), 'dd/MM/yyyy')}</td>
+                  <td>
+                    <div>
+                      <Link to={`/admin/analistas/editar/${analyst.id}`}>
+                        <MdModeEditOutline
+                          size={22}
+                          color="#111111"
+                        />
+                      </Link>
+
+                      <button type="button" onClick={() => openModalRemoveAnalyst(analyst.id)}>
+                        <IoTrashBinSharp
+                          size={22}
+                          color="#111111"
+                        />
+                      </button>
+                    </div>
+
+                  </td>
                 </tr>
               ))
             ) : (
@@ -204,6 +249,31 @@ function AnalystList() {
           <Loading />
         )
       }
+
+      <ModalConfirm open={isModalRemoveAnalystOpen}>
+        <div className="content">
+          <div className="content-header">
+            <button type="button">
+              <MdClose
+                size={20}
+                color="#3a3a3a"
+                onClick={() => setIsModalRemoveAnalystOpen(false)}
+              />
+            </button>
+          </div>
+
+          <p>
+            Tem certeza que deseja excluir analista ?
+          </p>
+
+          <footer className="content-footer">
+            <span onClick={() => setIsModalRemoveAnalystOpen(false)}>Cancelar</span>
+            <button type="button" onClick={removeAnalyst}>
+              Confirmar
+            </button>
+          </footer>
+        </div>
+      </ModalConfirm>
 
     </Container>
   );
