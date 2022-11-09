@@ -40,6 +40,7 @@ function AppointmentForm() {
   const [isOpenModalAnalystAvailable, setIsOpenModalAnalystAvailable] = useState(false);
   const [formValues, setFormValues] = useState();
   const [districtsToSelect, setDistrictsToSelect] = useState([]);
+  const [isModalWarningOpen, setIsModalWarningOpen] = useState(false);
 
   async function handleSubmit(values) {
     setIsOpen(true);
@@ -169,6 +170,9 @@ function AppointmentForm() {
 
   useEffect(() => {
     getDistricts();
+    setTimeout(() => {
+      setIsModalWarningOpen(true);
+    }, 2000);
   }, []);
 
   return (
@@ -684,6 +688,57 @@ function AppointmentForm() {
           </div>
         </ModalConfirm>
       </Content>
+
+      <ModalConfirm open={isModalWarningOpen}>
+        <div className="content">
+          <div className="content-header">
+            <button type="button">
+              <MdClose
+                size={20}
+                color="#3a3a3a"
+                onClick={() => setIsModalWarningOpen(false)}
+              />
+            </button>
+          </div>
+
+          <div>
+            <strong>IMPORTANTE</strong>
+            <p>
+              O atendimento pelo Cenapp não é gratuito e é sujeito à existência de vagas.
+              O valor da sessão deverá ser acordado entre o psicanalista e paciente;
+            </p>
+          </div>
+
+          <div>
+            <strong>Aviso de Privacidade</strong>
+            <p>
+              Os dados coletados pelo CENAPP neste formulário serão utilizados para confirmar a
+              identidade do solicitante, agendamento e confirmação de consultas e registro de
+              solicitações de atendimento. Sem esses dados mínimos não é possível realizar o
+              atendimento do paciente.
+            </p>
+            <p>
+              Os dados pessoais não serão utilizados pelo CENAPP para nenhuma outra finalidade
+              que não as acima indicadas e serão compartilhados apenas com o analista responsável
+              pelo atendimento.
+            </p>
+            <p>
+              A base legal para essa atividade de tratamento é “execução de contrato” e os dados
+              serão
+              armazenados pelo CENAPP durante todo o período de tratamento do paciente e, após esse
+              período pelo prazo de 05 anos para exercício regular de direitos em processo judicial,
+              administrativo ou arbitral
+            </p>
+          </div>
+
+          <footer className="content-footer">
+            <span onClick={() => setIsModalWarningOpen(false)}>Cancelar</span>
+            <button type="button" onClick={() => setIsModalWarningOpen(false)}>
+              Confirmar
+            </button>
+          </footer>
+        </div>
+      </ModalConfirm>
     </Container>
   );
 }

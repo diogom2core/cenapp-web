@@ -198,7 +198,7 @@ export const ModalConfirm = styled.div`
   align-items: center;
   justify-content: center;
   display: ${(props) => (props.open ? 'flex' : 'none')};
-  transition: 0.5s;
+  transition: all ease-in 0.5s;
 
   .content {
     width: 100%;
@@ -222,14 +222,15 @@ export const ModalConfirm = styled.div`
     }
 
     div {
+      margin-bottom: 30px;
       p {
         font-size: 14px;
       }
 
       strong {
-        text-align: center;
+        text-align: left;
         display: block;
-        margin-bottom: 30px;
+        margin-bottom: 15px;
       }
 
       span {
