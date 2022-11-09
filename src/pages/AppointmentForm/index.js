@@ -631,7 +631,7 @@ function AppointmentForm() {
               </p>
               <p>
                 - O sistema fará escolha do psicanalista de acordo com as opções que você marcou
-                na ficha de inscrição; mas não necessariamente haverá psicanalistas com horários 
+                na ficha de inscrição; mas não necessariamente haverá psicanalistas com horários
                 disponíveis dentro dos critérios escolhidos;
               </p>
               <p>
@@ -640,7 +640,7 @@ function AppointmentForm() {
               </p>
               <p>
                 - Ao receber o nome e contato do psicanalista, você terá o prazo máximo de 15
-                 dias corridos para entrar em contato;
+                dias corridos para entrar em contato;
               </p>
               <p>
                 - Caso não haja analista com vagas disponíveis de acordo com os critérios
