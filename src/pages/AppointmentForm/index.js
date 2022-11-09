@@ -139,25 +139,31 @@ function AppointmentForm() {
     switch (serviceTypeValue) {
       case 'adolecente':
         return `LEIA COM ATENÇÃO:
-        Atendimento para pessoas acima de 13 a 17 anos.`;
+        Atendimento para pessoas acima de 12 até 18 anos.
+        O atendimento psicanalítico é realizado preferencialmente 3 vezes por semana.`;
       case 'adultos':
         return `LEIA COM ATENÇÃO:
-        Atendimento para pessoas acima de 18 anos.`;
+        Atendimento para pessoas acima de 18 anos.
+        O atendimento psicanalítico é realizado preferencialmente 3 vezes por semana.`;
       case 'casal':
         return `LEIA COM ATENÇÃO:
-        Atendimento para pessoas acima de 18 anos.`;
+        Atendimento para pessoas acima de 18 anos.
+        O atendimento psicanalítico é realizado 1 vez por semana.`;
       case 'criancas':
         return `LEIA COM ATENÇÃO:
-        Atendimento para pessoas de 3 a 12 anos`;
+        Atendimento para pessoas acima de 3 até 12 anos.
+        O atendimento psicanalítico é realizado preferencialmente 3 vezes por semana.`;
       case 'familia':
         return `LEIA COM ATENÇÃO:
-          Atendimento para família.`;
+        O atendimento psicanalítico é realizado 1 vez por semana.`;
       case 'idosos':
         return `LEIA COM ATENÇÃO:
-        Atendimento para pessoas acima 60 anos`;
+        Atendimento para pessoas acima 60 anos
+        O atendimento psicanalítico é realizado preferencialmente 3 vezes por semana.`;
       case 'interverncoes':
         return `LEIA COM ATENÇÃO:
-          Intervenção precoce é um tipo de atendimento em que a mãe e/ou pai ou responsável (is) juntamente com o bebê (até 3 anos)  são atendidos em consultório e que visa trabalhar demandas dos vínculos pais/bebê, prevenindo patologias futuras.`;
+          Intervenção precoce é um tipo de atendimento em que a mãe e/ou pai ou responsável (is) juntamente com o bebê (até 3 anos)  são atendidos em consultório e que visa trabalhar demandas dos vínculos pais/bebê, prevenindo patologias futuras.
+          O atendimento psicanalítico é realizado 1 vez por semana.`;
       default:
         return 'Selecione o tipo de serviço';
     }
@@ -465,7 +471,7 @@ function AppointmentForm() {
 
                       <div className="conditional_inputs">
                         <Fild>
-                          <label htmlFor="period">Tem vínculo com algum membro da SPBsb?</label>
+                          <label htmlFor="period">Você conhece algum membro da Sociedade de Psicanálise de Brasília?</label>
 
                           <Radio.Group
                             onChange={(event) => setHasAssociationSPBSB(event.target.value)}
@@ -491,7 +497,7 @@ function AppointmentForm() {
                         {
                         hasAssociationSPBSB && (
                           <Fild>
-                            <label htmlFor="bond_spbsb_name">Nome do membro SPBsb</label>
+                            <label htmlFor="bond_spbsb_name">Qual o nome e vínculo possui com o membro?</label>
                             <Field id="bond_spbsb_name" name="bond_spbsb_name" placeholder="nome do membro" />
                           </Fild>
                         )
@@ -618,29 +624,35 @@ function AppointmentForm() {
             </div>
 
             <div>
-              <strong>INFORMAÇÃO LEI</strong>
+              <strong>IMPORTANTE</strong>
               <p>
                 - O atendimento pelo Cenapp não é gratuito e é sujeito à existência de vagas.
-                O valor da sessão deverá ser acordado entre a dupla analista e paciente;
-              </p>
-              <p>- O tratamento psicanalítico é realizado de 1 vezes por semana;</p>
-              <p>
-                - O sistema atende às opções que você marcou na ficha de inscrição, mas
-                não necessariamente haverá psicanalistas com vagas disponíveis dentro dos
-                critérios escolhidos;
+                O valor da sessão deverá ser acordado entre o psicanalista e paciente;
               </p>
               <p>
-                - Após a inscrição, o sistema lhe enviará um email com o nome e telefone do
-                analista com vaga disponível. Fique atento à caixa de spam;
+                - O sistema fará escolha do psicanalista de acordo com as opções que você marcou
+                na ficha de inscrição; mas não necessariamente haverá psicanalistas com horários 
+                disponíveis dentro dos critérios escolhidos;
               </p>
               <p>
-                - O prazo máximo para você entrar em contato com o analista é até 15 dias a
-                partir do recebimento do email com o contato do analista.
+                - Após a inscrição, o sistema lhe enviará um e-mail com o nome e telefone do
+                psicanalista disponível. Fique atento a sua caixa de spam;
+              </p>
+              <p>
+                - Ao receber o nome e contato do psicanalista, você terá o prazo máximo de 15
+                 dias corridos para entrar em contato;
+              </p>
+              <p>
+                - Caso não haja analista com vagas disponíveis de acordo com os critérios
+                escolhidos, o sistema ficará em modo de busca pelo prazo de 30 dias corridos;
+                se durante esse período de busca você não receber nenhum e-mail, e ainda
+                queira atendimento, por favor, entre em contato com a secretaria da Sociedade
+                de Psicanálise de Brasília, nos telefones (61) 99595-1073 / 99927-9900
+                (preferencialmente whatsapp) ou secretaria@spbsb.org.br / spbsb@spbsb.org.br.
               </p>
 
               <span>
-                ATENÇÃO: Caso você ultrapasse prazo de 15 dias para entrar em contato com
-                o analista, preencha uma nova ficha.
+                ...
               </span>
             </div>
 
