@@ -731,7 +731,7 @@ function AppointmentForm() {
             </p>
           </div>
 
-          <footer className="content-footer">
+          <footer className="content-footer c">
             <span onClick={() => setIsModalWarningOpen(false)}>Cancelar</span>
             <button type="button" onClick={() => setIsModalWarningOpen(false)}>
               Confirmar
