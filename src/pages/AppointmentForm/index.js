@@ -215,13 +215,13 @@ function AppointmentForm() {
                               onChange={(serviceTypeValue) =>
                                 setServiceType(serviceTypeValue)}
                             >
-                              <Option key="adultos">Adultos</Option>
-                              <Option key="idosos">Idosos</Option>
-                              <Option key="criancas">Crianças</Option>
-                              <Option key="adolecentes">Adolecente</Option>
+                              <Option key="adultos">Adulto</Option>
+                              <Option key="idosos">Adulto maduro</Option>
+                              <Option key="criancas">Criança</Option>
+                              <Option key="adolecentes">Adolescente</Option>
                               <Option key="casais">Casal</Option>
                               <Option key="familias">Família</Option>
-                              <Option key="interverncoes">Intervernções Precoce</Option>
+                              <Option key="interverncoes">Intervenção precoce</Option>
                             </Select>
                           </Fild>
                         </div>
