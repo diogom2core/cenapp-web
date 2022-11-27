@@ -10,7 +10,7 @@ import { Select, Radio, Checkbox, Divider } from 'antd';
 import { toast } from 'react-toastify';
 
 import MaskedInput from 'react-text-mask';
-import { AppoitmentFinish, Fild, Container, Content, FormBox, Footer, ModalConfirm } from './styles';
+import { AppoitmentFinish, Fild, Container, Content, FormBox, Footer, ModalConfirm, GroupBox } from './styles';
 import api from '../../services/api';
 import appointmentFinish from '../../assets/appointment_finish.png';
 import Button from '../../components/Button';
@@ -22,25 +22,29 @@ const plainOptions = ['Manhã', 'Tarde', 'Noite'];
 
 function AppointmentForm() {
   const [initialValues] = useState({
-    name: '',
-    email: '',
+    patient_name: '',
+    patient_email: '',
     bond_spbsb_name: '',
   });
-  const [district, setDistrict] = useState('');
-  const [modality, setModality] = useState('');
-  const [serviceType, setServiceType] = useState('');
-  const [sex, setSex] = useState('');
-  const [sexAnalyst, setSexAnalyst] = useState('');
-  const [isAppoitmentFinish, setIsAppoitmentFinish] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [preferenceDistrict, setPreferenceDistrict] = useState('');
+  const [preferenceAnalystSex, setPreferenceAnalystSex] = useState('');
+  const [preferenceServiceModality, setPreferenceServiceModality] = useState('');
+  const [preferenceServiceType, setPreferenceServiceType] = useState('');
+
+  const [patientSex, setPatientSex] = useState('');
+  const [patientTwoSex, setPatientTwoSex] = useState('');
+
   const [hasAssociationSPBSB, setHasAssociationSPBSB] = useState(false);
   const [fisrtSubscription, setFisrtSubscription] = useState(false);
   const [checkedList, setCheckedList] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isOpenModalAnalystAvailable, setIsOpenModalAnalystAvailable] = useState(false);
   const [formValues, setFormValues] = useState();
   const [districtsToSelect, setDistrictsToSelect] = useState([]);
   const [isModalWarningOpen, setIsModalWarningOpen] = useState(false);
+
+  const [isAppoitmentFinish, setIsAppoitmentFinish] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenModalAnalystAvailable, setIsOpenModalAnalystAvailable] = useState(false);
 
   async function handleSubmit(values) {
     setIsOpen(true);
@@ -51,42 +55,35 @@ function AppointmentForm() {
     try {
       setLoading(true);
 
-      const { name, email, birthday, bond_patient, cell_phone,
-        responsible_appointment, responsible_patient,
-        patient_one_name, patient_two_name,
-        patient_one_birthday, patient_two_birthday,
-        patient_one_phone, patient_two_phone,
-        kinship, phone, bond_spbsb_name } = formValues;
+      const { patient_made_request,
+        patient_name,
+        patient_email,
+        patient_birthday,
+        patient_phone_number,
+        patient_two_name,
+        patient_two_email,
+        patient_two_birthday,
+        patient_two_phone_number,
+        responsible_appointment_name,
+        responsible_appointment_email,
+        responsible_appointment_phone_number,
+        responsible_patient_name,
+        responsible_patient_kinship,
+        bond_spbsb_name,
+        bond_spbsb_type } = formValues;
 
       if (type === 'verify') {
-        const appointmentResponse = await api.post('/appointments/verify-analyst-available', {
-          name,
-          email,
-          district,
-          analyst_sex: sexAnalyst,
-          service_modality: modality,
-          service_type: serviceType,
-          sex,
-          birthday,
-          bond_patient,
-          cell_phone,
-          responsible_appointment,
-          responsible_patient,
-          night_service: checkedList.includes('Noite'),
-          afternoon_service: checkedList.includes('Tarde'),
-          morning_service: checkedList.includes('Manhã'),
-          patient_one_name,
-          patient_two_name,
-          patient_one_birthday,
-          patient_two_birthday,
-          patient_one_phone,
-          patient_two_phone,
-          kinship,
-          phone,
-          bond_spbsb_name,
+        const verifyResponse = await api.post('/appointments/verify-analyst-available', {
+          preference_district: preferenceDistrict,
+          preference_analyst_sex: preferenceAnalystSex,
+          preference_service_modality: preferenceServiceModality,
+          preference_service_type: preferenceServiceType,
+          preference_night_service: checkedList.includes('Noite'),
+          preference_afternoon_service: checkedList.includes('Tarde'),
+          preference_morning_service: checkedList.includes('Manhã'),
         });
 
-        if (!appointmentResponse.data.have_analyst_available) {
+        if (!verifyResponse.data.have_analyst_available) {
           setIsOpen(false);
           setIsOpenModalAnalystAvailable(true);
           return;
@@ -94,30 +91,32 @@ function AppointmentForm() {
       }
 
       await api.post('/appointments', {
-        name,
-        email,
-        district,
-        analyst_sex: sexAnalyst,
-        service_modality: modality,
-        service_type: serviceType,
-        sex,
-        birthday,
-        bond_patient,
-        cell_phone,
-        responsible_appointment,
-        responsible_patient,
-        night_service: checkedList.includes('Noite'),
-        afternoon_service: checkedList.includes('Tarde'),
-        morning_service: checkedList.includes('Manhã'),
-        patient_one_name,
+        preference_district: preferenceDistrict,
+        preference_analyst_sex: preferenceAnalystSex,
+        preference_service_modality: preferenceServiceModality,
+        preference_service_type: preferenceServiceType,
+        preference_night_service: checkedList.includes('Noite'),
+        preference_afternoon_service: checkedList.includes('Tarde'),
+        preference_morning_service: checkedList.includes('Manhã'),
+        patient_made_request,
+        patient_name,
+        patient_email,
+        patient_birthday,
+        patient_sex: patientSex,
+        patient_phone_number,
         patient_two_name,
-        patient_one_birthday,
+        patient_two_email,
         patient_two_birthday,
-        patient_one_phone,
-        patient_two_phone,
-        kinship,
-        phone,
+        patient_two_phone_number,
+        patient_two_patient_sex: patientTwoSex,
+        responsible_appointment_name,
+        responsible_appointment_email,
+        responsible_appointment_phone_number,
+        responsible_patient_name,
+        responsible_patient_kinship,
+        have_bond_spbsb: hasAssociationSPBSB,
         bond_spbsb_name,
+        bond_spbsb_type,
       });
 
       setLoading(false);
@@ -137,7 +136,7 @@ function AppointmentForm() {
 
   function getServiceTypeMessage(serviceTypeValue) {
     switch (serviceTypeValue) {
-      case 'adolecente':
+      case 'adolecentes':
         return `LEIA COM ATENÇÃO:
         Atendimento para pessoas acima de 12 até 18 anos.
         O atendimento psicanalítico é realizado preferencialmente 3 vezes por semana.`;
@@ -145,7 +144,7 @@ function AppointmentForm() {
         return `LEIA COM ATENÇÃO:
         Atendimento para pessoas acima de 18 anos.
         O atendimento psicanalítico é realizado preferencialmente 3 vezes por semana.`;
-      case 'casal':
+      case 'casais':
         return `LEIA COM ATENÇÃO:
         Atendimento para pessoas acima de 18 anos.
         O atendimento psicanalítico é realizado 1 vez por semana.`;
@@ -153,7 +152,7 @@ function AppointmentForm() {
         return `LEIA COM ATENÇÃO:
         Atendimento para pessoas acima de 3 até 12 anos.
         O atendimento psicanalítico é realizado preferencialmente 3 vezes por semana.`;
-      case 'familia':
+      case 'familias':
         return `LEIA COM ATENÇÃO:
         O atendimento psicanalítico é realizado 1 vez por semana.`;
       case 'idosos':
@@ -202,7 +201,7 @@ function AppointmentForm() {
                   <Form>
 
                     <FormBox>
-                      <h3> Atendimento</h3>
+                      <h3>Atendimento</h3>
 
                       <div className="form_box_main">
                         <div>
@@ -213,7 +212,7 @@ function AppointmentForm() {
                               defaultValue="Modalidade de atendimento"
                               style={{ width: 205 }}
                               onChange={(serviceTypeValue) =>
-                                setServiceType(serviceTypeValue)}
+                                setPreferenceServiceType(serviceTypeValue)}
                             >
                               <Option key="adultos">Adulto</Option>
                               <Option key="idosos">Adulto maduro</Option>
@@ -227,243 +226,415 @@ function AppointmentForm() {
                         </div>
 
                         <div className="text_helper">
-                          {getServiceTypeMessage(serviceType)}
+                          {getServiceTypeMessage(preferenceServiceType)}
                         </div>
                       </div>
-
-                      <div className="conditional_inputs">
-                        {
-                        (serviceType === 'adolecentes' || serviceType === 'criancas' || serviceType === 'interverncoes') && (
-                          <>
-                            <Fild>
-                              <label htmlFor="name">Responsável pela solicitação</label>
-                              <Field id="name" name="responsible_appointment" placeholder="Responsável pela solicitação" />
-                            </Fild>
-
-                            <Fild>
-                              <label htmlFor="name">Responsável pelo paciente</label>
-                              <Field id="name" name="responsible_patient" placeholder="Responsável pelo paciente" />
-                            </Fild>
-
-                            <Fild>
-                              <label htmlFor="name">Vínculo com paciente</label>
-                              <Field id="name" name="bond_patient" placeholder="Vínculo com paciente" />
-                            </Fild>
-                          </>
-                        )
-                       }
-
-                        {
-                        serviceType === 'casais' && (
-                          <>
-                            <Fild>
-                              <label htmlFor="name">Nome do paciente 01</label>
-                              <Field id="name" name="patient_one_name" placeholder="Nome do paciente 01" />
-                            </Fild>
-
-                            <Fild>
-                              <label htmlFor="name">Nome do paciente 02</label>
-                              <Field id="name" name="patient_two_name" placeholder="Nome do paciente 02" />
-                            </Fild>
-
-                            <Fild>
-                              <label htmlFor="patient_one_birthday">Nascimento do paciente 01</label>
-                              <Field
-                                name="patient_one_birthday"
-                                render={({ field }) => (
-                                  <MaskedInput
-                                    {...field}
-                                    mask={birthdayMask}
-                                    id="patient_one_birthday"
-                                    placeholder="Nascimento do paciente 01"
-                                    type="text"
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    className={
-                                    errors.birthdayMask && touched.birthdayMask
-                                      ? 'text-input error'
-                                      : 'text-input'
-                                    }
-                                  />
-                                )}
-                              />
-                            </Fild>
-
-                            <Fild>
-                              <label htmlFor="patient_two_birthday">Nascimento do paciente 02</label>
-                              <Field
-                                id="patient_two_birthday"
-                                name="patient_two_birthday"
-                                render={({ field }) => (
-                                  <MaskedInput
-                                    {...field}
-                                    mask={birthdayMask}
-                                    id="patient_two_birthday"
-                                    placeholder="Nascimento do paciente 02"
-                                    type="text"
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    className={
-                                    errors.patient_two_birthday && touched.patient_two_birthday
-                                      ? 'text-input error'
-                                      : 'text-input'
-                                    }
-                                  />
-                                )}
-                              />
-                            </Fild>
-
-                            <Fild>
-                              <label htmlFor="patient_one_phone">Telefone do paciente 01</label>
-                              <Field
-                                id="patient_one_phone"
-                                name="patient_one_phone"
-                                render={({ field }) => (
-                                  <MaskedInput
-                                    {...field}
-                                    mask={phoneNumberMask}
-                                    id="patient_one_phone"
-                                    placeholder="Telefone do paciente 01"
-                                    type="text"
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    className={
-                                    errors.patient_one_phone && touched.patient_one_phone
-                                      ? 'text-input error'
-                                      : 'text-input'
-                                    }
-                                  />
-                                )}
-                              />
-                            </Fild>
-
-                            <Fild>
-                              <label htmlFor="patient_two_phone">Telefone do paciente 02</label>
-                              <Field
-                                name="patient_two_phone"
-                                render={({ field }) => (
-                                  <MaskedInput
-                                    {...field}
-                                    mask={phoneNumberMask}
-                                    id="patient_two_phone"
-                                    placeholder="Telefone do paciente 02"
-                                    type="text"
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    className={
-                                    errors.patient_two_phone && touched.patient_two_birthday
-                                      ? 'text-input error'
-                                      : 'text-input'
-                                    }
-                                  />
-                                )}
-                              />
-                            </Fild>
-                          </>
-                        )
-                       }
-                      </div>
-
                     </FormBox>
+
+                    {/* Criança e Adolecente */}
+                    {
+                      (preferenceServiceType === 'criancas' || preferenceServiceType === 'adolecentes') && (
+                      <FormBox>
+                        <>
+                          <h4>Responsável pela Solicitação</h4>
+
+                          <div className="conditional_inputs">
+                            <Fild>
+                              <label htmlFor="responsible_appointment_name">Nome do responsável</label>
+                              <Field id="responsible_appointment_name" name="responsible_appointment_name" placeholder="Nome do responsável" />
+                            </Fild>
+
+                            <Fild>
+                              <label htmlFor="responsible_appointment_email">E-mail do responsável</label>
+                              <Field id="responsible_appointment_email" name="responsible_appointment_email" placeholder="E-mail" />
+                            </Fild>
+
+                            <Fild>
+                              <label htmlFor="responsible_appointment_phone_number">Telefone celular</label>
+                              <Field
+                                name="responsible_appointment_phone_number"
+                                render={({ field }) => (
+                                  <MaskedInput
+                                    {...field}
+                                    id="responsible_appointment_phone_number"
+                                    name="responsible_appointment_phone_number"
+                                    mask={phoneNumberMask}
+                                    placeholder="Telefone"
+                                    type="text"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    className={
+                                                errors.responsible_appointment_phone_number &&
+                                                touched.responsible_appointment_phone_number
+                                                  ? 'text-input error'
+                                                  : 'text-input'
+                                              }
+                                  />
+                                )}
+                              />
+                            </Fild>
+                          </div>
+
+                          <h4>Responsável pela Paciente</h4>
+
+                          <div className="conditional_inputs">
+                            <Fild>
+                              <label htmlFor="responsible_patient_name">Nome do responsável</label>
+                              <Field id="responsible_patient_name" name="responsible_patient_name" placeholder="Nome do responsável" />
+                            </Fild>
+
+                            <Fild>
+                              <label htmlFor="responsible_patient_kinship">Vínculo com o paciente</label>
+                              <Field id="responsible_patient_kinship" name="responsible_patient_kinship" placeholder="Vínculo com o paciente" />
+                            </Fild>
+                          </div>
+                        </>
+                      </FormBox>
+                      )
+                    }
 
                     <FormBox>
                       <h3>Informações do paciente</h3>
 
-                      <div className="conditional_inputs">
-                        <Fild>
-                          <label htmlFor="name">Nome</label>
-                          <Field id="name" name="name" placeholder="Nome" />
-                        </Fild>
+                      {/* Casal */}
+                      {
+                        preferenceServiceType === 'casais' && (
+                          <GroupBox>
+                            <h4>Paciente 01</h4>
 
-                        <Fild>
-                          <label htmlFor="email">E-mail</label>
-                          <Field id="email" name="email" placeholder="E-mail" />
-                        </Fild>
+                            <div className="conditional_inputs">
+                              <Fild>
+                                <label htmlFor="patient_name">Nome</label>
+                                <Field id="patient_name" name="patient_name" placeholder="Nome" />
+                              </Fild>
 
-                        <Fild>
-                          <label htmlFor="birthday">Data de nascimento</label>
-                          <Field
-                            name="birthday"
-                            render={({ field }) => (
-                              <MaskedInput
-                                {...field}
-                                mask={birthdayMask}
-                                id="birthday"
-                                placeholder="Data de nascimento"
-                                type="text"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                className={
-                      errors.birthday && touched.birthday
+                              <Fild>
+                                <label htmlFor="patient_email">E-mail</label>
+                                <Field id="patient_email" name="patient_email" placeholder="E-mail" />
+                              </Fild>
+
+                              <Fild>
+                                <label htmlFor="patient_birthday">Data de nascimento</label>
+                                <Field
+                                  name="patient_birthday"
+                                  render={({ field }) => (
+                                    <MaskedInput
+                                      {...field}
+                                      mask={birthdayMask}
+                                      id="patient_birthday"
+                                      placeholder="Data de nascimento"
+                                      type="text"
+                                      onChange={handleChange}
+                                      onBlur={handleBlur}
+                                      className={
+                        errors.patient_birthday && touched.patient_birthday
+                          ? 'text-input error'
+                          : 'text-input'
+                      }
+                                    />
+                                  )}
+                                />
+
+                              </Fild>
+
+                              <Fild>
+                                <label htmlFor="patient_sex">Sexo</label>
+                                <Select
+                                  id="patient_sex"
+                                  defaultValue="Sexo"
+                                  style={{ width: 205 }}
+                                  onChange={(sexValue) => setPatientSex(sexValue)}
+                                >
+                                  <Option key="m">Masculino</Option>
+                                  <Option key="f">Feminino</Option>
+                                </Select>
+                              </Fild>
+
+                              <Fild>
+                                <label htmlFor="patient_phone_number">Telefone celular</label>
+                                <Field
+                                  name="patient_phone_number"
+                                  render={({ field }) => (
+                                    <MaskedInput
+                                      {...field}
+                                      id="patient_phone_number"
+                                      name="patient_phone_number"
+                                      mask={phoneNumberMask}
+                                      placeholder="Telefone celular"
+                                      type="text"
+                                      onChange={handleChange}
+                                      onBlur={handleBlur}
+                                      className={
+                                                  errors.patient_phone_number &&
+                                                  touched.patient_phone_number
+                                                    ? 'text-input error'
+                                                    : 'text-input'
+                                                }
+                                    />
+                                  )}
+                                />
+                              </Fild>
+                            </div>
+
+                            <h4>Paciente 02</h4>
+
+                            <div className="conditional_inputs">
+                              <Fild>
+                                <label htmlFor="patient_two_name">Nome</label>
+                                <Field id="patient_two_name" name="patient_two_name" placeholder="Nome" />
+                              </Fild>
+
+                              <Fild>
+                                <label htmlFor="patient_two_email">E-mail</label>
+                                <Field id="patient_two_email" name="patient_two_email" placeholder="E-mail" />
+                              </Fild>
+
+                              <Fild>
+                                <label htmlFor="patient_two_birthday">Data de nascimento</label>
+                                <Field
+                                  name="patient_two_birthday"
+                                  render={({ field }) => (
+                                    <MaskedInput
+                                      {...field}
+                                      mask={birthdayMask}
+                                      id="patient_two_birthday"
+                                      placeholder="Data de nascimento"
+                                      type="text"
+                                      onChange={handleChange}
+                                      onBlur={handleBlur}
+                                      className={
+errors.patient_two_birthday && touched.patient_two_birthday
+  ? 'text-input error'
+  : 'text-input'
+}
+                                    />
+                                  )}
+                                />
+
+                              </Fild>
+
+                              <Fild>
+                                <label htmlFor="patient_two_sex">Sexo</label>
+                                <Select
+                                  id="patient_two_sex"
+                                  defaultValue="Sexo"
+                                  style={{ width: 205 }}
+                                  onChange={(sexValue) => setPatientTwoSex(sexValue)}
+                                >
+                                  <Option key="m">Masculino</Option>
+                                  <Option key="f">Feminino</Option>
+                                </Select>
+                              </Fild>
+
+                              <Fild>
+                                <label htmlFor="patient_two_phone_number">Telefone celular</label>
+                                <Field
+                                  name="patient_two_phone_number"
+                                  render={({ field }) => (
+                                    <MaskedInput
+                                      {...field}
+                                      id="patient_two_phone_number"
+                                      name="patient_two_phone_number"
+                                      mask={phoneNumberMask}
+                                      placeholder="Telefone celular"
+                                      type="text"
+                                      onChange={handleChange}
+                                      onBlur={handleBlur}
+                                      className={
+                      errors.patient_two_phone_number && touched.patient_two_phone_number
                         ? 'text-input error'
                         : 'text-input'
                     }
+                                    />
+                                  )}
+                                />
+                              </Fild>
+                            </div>
+                          </GroupBox>
+                        )
+                      }
+
+                      {/* Outros */}
+                      {
+                        preferenceServiceType !== 'casais' && (
+                          <GroupBox>
+                            <div className="conditional_inputs">
+                              <Fild>
+                                <label htmlFor="patient_name">Nome</label>
+                                <Field id="patient_name" name="patient_name" placeholder="Nome" />
+                              </Fild>
+
+                              <Fild>
+                                <label htmlFor="patient_email">E-mail</label>
+                                <Field id="patient_email" name="patient_email" placeholder="E-mail" />
+                              </Fild>
+
+                              <Fild>
+                                <label htmlFor="patient_birthday">Data de nascimento</label>
+                                <Field
+                                  name="patient_birthday"
+                                  render={({ field }) => (
+                                    <MaskedInput
+                                      {...field}
+                                      mask={birthdayMask}
+                                      id="patient_birthday"
+                                      placeholder="Data de nascimento"
+                                      type="text"
+                                      onChange={handleChange}
+                                      onBlur={handleBlur}
+                                      className={
+                        errors.patient_birthday && touched.patient_birthday
+                          ? 'text-input error'
+                          : 'text-input'
+                      }
+                                    />
+                                  )}
+                                />
+
+                              </Fild>
+
+                              <Fild>
+                                <label htmlFor="patient_sex">Sexo</label>
+                                <Select
+                                  id="patient_sex"
+                                  defaultValue="Sexo"
+                                  style={{ width: 205 }}
+                                  onChange={(sexValue) => setPatientSex(sexValue)}
+                                >
+                                  <Option key="m">Masculino</Option>
+                                  <Option key="f">Feminino</Option>
+                                </Select>
+                              </Fild>
+
+                              <Fild>
+                                <label htmlFor="patient_phone_number">Telefone celular</label>
+                                <Field
+                                  name="patient_phone_number"
+                                  render={({ field }) => (
+                                    <MaskedInput
+                                      {...field}
+                                      id="patient_phone_number"
+                                      name="patient_phone_number"
+                                      mask={phoneNumberMask}
+                                      placeholder="Telefone celular"
+                                      type="text"
+                                      onChange={handleChange}
+                                      onBlur={handleBlur}
+                                      className={
+                                                  errors.patient_phone_number &&
+                                                  touched.patient_phone_number
+                                                    ? 'text-input error'
+                                                    : 'text-input'
+                                                }
+                                    />
+                                  )}
+                                />
+                              </Fild>
+                            </div>
+                          </GroupBox>
+                        )
+                      }
+
+                      {
+                        false && (
+                          <div className="conditional_inputs">
+                            <Fild>
+                              <label htmlFor="name">Nome</label>
+                              <Field id="name" name="name" placeholder="Nome" />
+                            </Fild>
+
+                            <Fild>
+                              <label htmlFor="email">E-mail</label>
+                              <Field id="email" name="email" placeholder="E-mail" />
+                            </Fild>
+
+                            <Fild>
+                              <label htmlFor="birthday">Data de nascimento</label>
+                              <Field
+                                name="birthday"
+                                render={({ field }) => (
+                                  <MaskedInput
+                                    {...field}
+                                    mask={birthdayMask}
+                                    id="birthday"
+                                    placeholder="Data de nascimento"
+                                    type="text"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    className={
+                        errors.birthday && touched.birthday
+                          ? 'text-input error'
+                          : 'text-input'
+                      }
+                                  />
+                                )}
                               />
-                            )}
-                          />
 
-                        </Fild>
+                            </Fild>
 
-                        <Fild>
-                          <label htmlFor="sex">Sexo</label>
-                          <Select
-                            id="sex"
-                            defaultValue="Sexo"
-                            style={{ width: 205 }}
-                            onChange={(sexValue) => setSex(sexValue)}
-                          >
-                            <Option key="m">Masculino</Option>
-                            <Option key="f">Feminino</Option>
-                          </Select>
-                        </Fild>
+                            <Fild>
+                              <label htmlFor="sex">Sexo</label>
+                              <Select
+                                id="sex"
+                                defaultValue="Sexo"
+                                style={{ width: 205 }}
+                                onChange={(sexValue) => setPatientSex(sexValue)}
+                              >
+                                <Option key="m">Masculino</Option>
+                                <Option key="f">Feminino</Option>
+                              </Select>
+                            </Fild>
 
-                        <Fild>
-                          <label htmlFor="cell_phone">Telefone celular</label>
-                          <Field
-                            name="cell_phone"
-                            render={({ field }) => (
-                              <MaskedInput
-                                {...field}
-                                id="cell_phone"
+                            <Fild>
+                              <label htmlFor="cell_phone">Telefone celular</label>
+                              <Field
                                 name="cell_phone"
-                                mask={phoneNumberMask}
-                                placeholder="Telefone celular"
-                                type="text"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                className={
-                                                errors.cell_phone && touched.cell_phone
-                                                  ? 'text-input error'
-                                                  : 'text-input'
-                                              }
+                                render={({ field }) => (
+                                  <MaskedInput
+                                    {...field}
+                                    id="cell_phone"
+                                    name="cell_phone"
+                                    mask={phoneNumberMask}
+                                    placeholder="Telefone celular"
+                                    type="text"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    className={
+                                                  errors.cell_phone && touched.cell_phone
+                                                    ? 'text-input error'
+                                                    : 'text-input'
+                                                }
+                                  />
+                                )}
                               />
-                            )}
-                          />
-                        </Fild>
+                            </Fild>
 
-                        <Fild>
-                          <label htmlFor="phone">Telefone fixo</label>
-                          <Field
-                            name="phone"
-                            render={({ field }) => (
-                              <MaskedInput
-                                {...field}
-                                id="email"
-                                mask={residentialNumberMask}
-                                placeholder="Telefone fixo"
-                                type="text"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                className={
-                                errors.phone && touched.phone
-                                  ? 'text-input error'
-                                  : 'text-input'
-                                }
+                            <Fild>
+                              <label htmlFor="phone">Telefone fixo</label>
+                              <Field
+                                name="phone"
+                                render={({ field }) => (
+                                  <MaskedInput
+                                    {...field}
+                                    id="email"
+                                    mask={residentialNumberMask}
+                                    placeholder="Telefone fixo"
+                                    type="text"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    className={
+                                  errors.phone && touched.phone
+                                    ? 'text-input error'
+                                    : 'text-input'
+                                  }
+                                  />
+                                )}
                               />
-                            )}
-                          />
-                        </Fild>
-                      </div>
+                            </Fild>
+                          </div>
+                        )
+                      }
+
                     </FormBox>
 
                     <FormBox>
@@ -482,6 +653,24 @@ function AppointmentForm() {
                           </Radio.Group>
                         </Fild>
 
+                        {
+                        hasAssociationSPBSB && (
+                          <>
+                            <Fild>
+                              <label htmlFor="bond_spbsb_name">Qual o nome e vínculo possui com o membro?</label>
+                              <Field id="bond_spbsb_name" name="bond_spbsb_name" placeholder="nome do membro" />
+                            </Fild>
+
+                            <Fild>
+                              <label htmlFor="bond_spbsb_type">Qual o vínculo?</label>
+                              <Field id="bond_spbsb_type" name="bond_spbsb_type" placeholder="Vínculo" />
+                            </Fild>
+
+                          </>
+
+                        )
+                      }
+
                         <Fild>
                           <label htmlFor="period">Primeira inscrição no cenapp?</label>
 
@@ -492,29 +681,6 @@ function AppointmentForm() {
                             <Radio value={false}>Não</Radio>
                             <Radio value>Sim</Radio>
                           </Radio.Group>
-                        </Fild>
-
-                        {
-                        hasAssociationSPBSB && (
-                          <Fild>
-                            <label htmlFor="bond_spbsb_name">Qual o nome e vínculo possui com o membro?</label>
-                            <Field id="bond_spbsb_name" name="bond_spbsb_name" placeholder="nome do membro" />
-                          </Fild>
-                        )
-                      }
-
-                        <Fild>
-                          <label htmlFor="sex">Sexo do Analísta</label>
-                          <Select
-                            id="sex"
-                            defaultValue="Sexo do analista"
-                            style={{ width: 205 }}
-                            onChange={(sexValue) => setSexAnalyst(sexValue)}
-                          >
-                            <Option key="m">Homem</Option>
-                            <Option key="f">Mulher</Option>
-                            <Option key="i">Indiferente</Option>
-                          </Select>
                         </Fild>
 
                         <Fild>
@@ -528,12 +694,27 @@ function AppointmentForm() {
                         </Fild>
 
                         <Fild>
+                          <label htmlFor="sex">Sexo do Analísta</label>
+                          <Select
+                            id="sex"
+                            defaultValue="Sexo do analista"
+                            style={{ width: 205 }}
+                            onChange={(sexValue) => setPreferenceAnalystSex(sexValue)}
+                          >
+                            <Option key="m">Homem</Option>
+                            <Option key="f">Mulher</Option>
+                            <Option key="i">Indiferente</Option>
+                          </Select>
+                        </Fild>
+
+                        <Fild>
                           <label htmlFor="modality">Modalidade de Atendimento</label>
                           <Select
                             id="modality"
                             defaultValue="Modalidade de atendimento"
                             style={{ width: 205 }}
-                            onChange={(modalityValue) => setModality(modalityValue)}
+                            onChange={(modalityValue) =>
+                              setPreferenceServiceModality(modalityValue)}
                           >
                             <Option key="presencial">Presencial</Option>
                             <Option key="online">Online</Option>
@@ -542,7 +723,7 @@ function AppointmentForm() {
                         </Fild>
 
                         {
-                      modality && modality !== 'online' && (
+                      preferenceServiceModality && preferenceServiceModality !== 'online' && (
                         <Fild>
                           <label htmlFor="district">Bairro</label>
 
@@ -550,7 +731,7 @@ function AppointmentForm() {
                             id="district"
                             defaultValue="Selecione o bairro"
                             style={{ width: 205 }}
-                            onChange={(districtValue) => setDistrict(districtValue)}
+                            onChange={(districtValue) => setPreferenceDistrict(districtValue)}
                           >
                             {
                               !!districtsToSelect.length && (

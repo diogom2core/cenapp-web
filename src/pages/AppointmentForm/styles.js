@@ -155,6 +155,10 @@ export const FormBox = styled.div`
     margin-bottom: 20px;
   }
 
+  h4 {
+    text-transform: uppercase;
+  }
+
   .form_box_main {
     display: flex;
     margin-bottom: 20px;
@@ -276,3 +280,4 @@ export const ModalConfirm = styled.div`
     }
   }
 `;
+export const GroupBox = styled.div``;
