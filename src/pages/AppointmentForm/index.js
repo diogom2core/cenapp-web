@@ -1,9 +1,10 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable consistent-return */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable prettier/prettier */
 import { Field, Form, Formik } from 'formik';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { MdClose } from 'react-icons/md';
 
 import { Select, Radio, Checkbox, Divider } from 'antd';
@@ -35,6 +36,7 @@ function AppointmentForm() {
   const [patientTwoSex, setPatientTwoSex] = useState('');
   const [patientMadeRequest, setPatientMadeRequest] = useState('');
   const [whoSeeksCare, setWhoSeeksCare] = useState('');
+  const [howManyFamilyMembers, setHowManyFamilyMembers] = useState(0);
 
   const [hasAssociationSPBSB, setHasAssociationSPBSB] = useState(false);
   const [fisrtSubscription, setFisrtSubscription] = useState(false);
@@ -53,9 +55,27 @@ function AppointmentForm() {
     setFormValues(values);
   }
 
+  const familyMembersArray = useMemo(() => Array.from(
+    { length: Number(howManyFamilyMembers) },
+    (_, i) => i + 1,
+  ), [howManyFamilyMembers]);
+
   const sendAppointment = useCallback(async (type) => {
     try {
       setLoading(true);
+
+      const familyMembersData = [];
+
+      familyMembersArray.map((member) => {
+        const getMember = {
+          name: formValues[`family_patient_name_${member}`],
+          email: formValues[`family_patient_email_${member}`],
+          birthday: formValues[`family_patient_birthday_${member}`],
+          kinship: formValues[`family_patient_kinship_${member}`],
+        };
+
+        return familyMembersData.push(getMember);
+      });
 
       const {
         patient_name,
@@ -104,7 +124,7 @@ function AppointmentForm() {
         preference_night_service: checkedList.includes('Noite'),
         preference_afternoon_service: checkedList.includes('Tarde'),
         preference_morning_service: checkedList.includes('Manhã'),
-        patient_made_request: patientMadeRequest,
+        patient_made_request: preferenceServiceType === 'interverncoes' ? (whoSeeksCare === 'outro' ? 'outro' : patientMadeRequest) : patientMadeRequest,
         patient_name,
         patient_email,
         patient_birthday,
@@ -118,16 +138,17 @@ function AppointmentForm() {
         responsible_appointment_name,
         responsible_appointment_email,
         responsible_appointment_phone_number,
-        responsible_appointment_kinship: whoSeeksCare === 'outro' ? responsible_appointment_kinship : 'mãe',
+        responsible_appointment_kinship: preferenceServiceType === 'interverncoes' ? (whoSeeksCare === 'outro' ? responsible_appointment_kinship : 'mãe') : null,
         responsible_appointment_two_name,
         responsible_appointment_two_email,
         responsible_appointment_two_phone_number,
-        responsible_appointment_two_kinship: 'pai',
+        responsible_appointment_two_kinship: preferenceServiceType === 'interverncoes' ? 'pai' : null,
         responsible_patient_name,
         responsible_patient_kinship,
         have_bond_spbsb: hasAssociationSPBSB,
         bond_spbsb_name,
         bond_spbsb_type,
+        family_members: familyMembersData,
       });
 
       setLoading(false);
@@ -653,9 +674,86 @@ errors.patient_two_birthday && touched.patient_two_birthday
                         )
                       }
 
+                      {/* Familia */}
+                      {
+                        preferenceServiceType === 'familias' && (
+                          <>
+                            <Fild>
+                              <label htmlFor="who_seeks_care">Quantos integrantes compõem a família ?</label>
+                              <Select
+                                id="who_seeks_care"
+                                defaultValue="Número de integrantes ?"
+                                style={{ width: 250 }}
+                                onChange={(familyMambers) => setHowManyFamilyMembers(familyMambers)}
+                              >
+                                <Option key="2">2</Option>
+                                <Option key="3">3</Option>
+                                <Option key="4">4</Option>
+                                <Option key="5">5</Option>
+                                <Option key="6">6</Option>
+                                <Option key="7">7</Option>
+                                <Option key="8">8</Option>
+                                <Option key="9">9</Option>
+                                <Option key="10">10</Option>
+                              </Select>
+                            </Fild>
+
+                            <GroupBox>
+                              {
+                                !!familyMembersArray.length && (
+                                  familyMembersArray.map((numberFamily) => (
+                                    <>
+                                      <h4>
+                                        Membro
+                                        { numberFamily}
+                                      </h4>
+
+                                      <div className="conditional_inputs">
+                                        <Fild>
+                                          <label htmlFor={`family_patient_name_${numberFamily}`}>Nome</label>
+                                          <Field id={`family_patient_name_${numberFamily}`} name={`family_patient_name_${numberFamily}`} placeholder="Nome" />
+                                        </Fild>
+
+                                        <Fild>
+                                          <label htmlFor={`family_patient_email_${numberFamily}`}>E-mail</label>
+                                          <Field id={`family_patient_email_${numberFamily}`} name={`family_patient_email_${numberFamily}`} placeholder="E-mail" />
+                                        </Fild>
+
+                                        <Fild>
+                                          <label htmlFor={`family_patient_birthday_${numberFamily}`}>Data de nascimento</label>
+                                          <Field
+                                            name={`family_patient_birthday_${numberFamily}`}
+                                            render={({ field }) => (
+                                              <MaskedInput
+                                                {...field}
+                                                mask={birthdayMask}
+                                                id={`family_patient_birthday_${numberFamily}`}
+                                                placeholder="Data de nascimento"
+                                                type="text"
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                              />
+                                            )}
+                                          />
+                                        </Fild>
+
+                                        <Fild>
+                                          <label htmlFor={`family_patient_kinship_${numberFamily}`}>Grau de parentesco</label>
+                                          <Field id={`family_patient_kinship_${numberFamily}`} name={`family_patient_kinship_${numberFamily}`} placeholder="Grau de parentesco" />
+                                        </Fild>
+                                      </div>
+                                    </>
+                                  ))
+                                )
+                              }
+                            </GroupBox>
+                          </>
+                        )
+                      }
+
                       {/* Outros */}
                       {
-                        (preferenceServiceType !== 'casais' && preferenceServiceType !== 'interverncoes') && (
+                        (preferenceServiceType !== 'casais' && preferenceServiceType !== 'interverncoes' && preferenceServiceType !== 'familias') && (
                           <GroupBox>
                             <div className="conditional_inputs">
                               <Fild>
@@ -741,6 +839,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
                           </GroupBox>
                         )
                       }
+
                     </FormBox>
 
                     <FormBox>
