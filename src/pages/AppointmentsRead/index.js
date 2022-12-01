@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable function-paren-newline */
 import React, { useCallback, useEffect, useState } from 'react';
@@ -21,15 +22,16 @@ import Button from '../../components/Button';
 
 function AppointmentsRead() {
   const [initialValues, setInitialValues] = useState({
-    name: '',
-    email: '',
+    patient_name: '',
+    patient_email: '',
     shift: '',
-    analyst_sex: '',
-    service_modality: '',
-    district: '',
-    service_type: '',
+    preference_analyst_sex: '',
+    preference_service_modality: '',
+    preference_district: '',
+    preference_service_type: '',
     analyst_name: '',
     analyst_email: '',
+    family_members: [],
   });
   const [loading, setLoading] = useState(true);
   const { appointment_id } = useParams();
@@ -39,6 +41,7 @@ function AppointmentsRead() {
   const [analysts, setAnalysts] = useState();
   const [isLoadAnalysts, setIsLoadAnalysts] = useState(false);
   const [analystSelected, setAnalystSelected] = useState('');
+  const [familyMembersState, setFamilyMembersState] = useState([]);
 
   const history = useHistory();
 
@@ -63,15 +66,30 @@ function AppointmentsRead() {
   const loadAppointment = async () => {
     try {
       const response = await api.get(`/appointments/read/${appointment_id}`);
+
+      const familyMembers = response.data.family_members;
+
+      const familyFormatted = {};
+
+      familyMembers.map((family, index) => {
+        familyFormatted[`member_name_${index}`] = family.name;
+        familyFormatted[`member_email_${index}`] = family.email;
+        familyFormatted[`member_birthday_${index}`] = family.birthday;
+        familyFormatted[`member_kinship_${index}`] = family.kinship;
+      });
+
+      setFamilyMembersState(response.data.family_members);
+
       setInitialValues({
         ...response.data,
         shift: getShift(
-          response.data.night_service,
-          response.data.afternoon_service,
-          response.data.morning_service,
+          response.data.preference_night_service,
+          response.data.preference_afternoon_service,
+          response.data.preference_morning_service,
         ),
         analyst_name: response.data.analyst && response.data.analyst.name,
         analyst_email: response.data.analyst && response.data.analyst.email,
+        ...familyFormatted,
       });
       setAnalyst(response.data.analyst);
       setLoading(false);
@@ -115,7 +133,6 @@ function AppointmentsRead() {
       toast.error('Erro ao agendar manualmente');
     }
   }, [analystSelected]);
-
   return (
     <Container>
       <h2>Visualização de Solicitação</h2>
@@ -126,22 +143,76 @@ function AppointmentsRead() {
             {() => (
               <Form>
                 <h3>Informação do Paciente</h3>
-                <Row>
-                  <Column>
-                    <label htmlFor="name">Nome</label>
-                    <Field id="name" name="name" placeholder="Nome" disabled />
-                  </Column>
+                {!!familyMembersState.length &&
+                  familyMembersState.map((f, index) => (
+                    <Row>
+                      <Column>
+                        <label htmlFor={`member_name_${index}`}>Nome</label>
+                        <Field
+                          id={`member_name_${index}`}
+                          name={`member_name_${index}`}
+                          placeholder="Nome"
+                          disabled
+                        />
+                      </Column>
 
-                  <Column>
-                    <label htmlFor="email">E-mail</label>
-                    <Field
-                      id="email"
-                      name="email"
-                      placeholder="E-mail"
-                      disabled
-                    />
-                  </Column>
-                </Row>
+                      <Column>
+                        <label htmlFor={`member_email_${index}`}>E-mail</label>
+                        <Field
+                          id={`member_email_${index}`}
+                          name={`member_email_${index}`}
+                          placeholder="E-mail"
+                          disabled
+                        />
+                      </Column>
+                      <Column>
+                        <label htmlFor={`member_birthday_${index}`}>
+                          Data de nascimento
+                        </label>
+                        <Field
+                          id={`member_birthday_${index}`}
+                          name={`member_birthday_${index}`}
+                          placeholder="Data de nascimento"
+                          disabled
+                        />
+                      </Column>
+                      <Column>
+                        <label htmlFor={`member_kinship_${index}`}>
+                          Grau de parentesco
+                        </label>
+                        <Field
+                          id={`member_kinship_${index}`}
+                          name={`member_kinship_${index}`}
+                          placeholder="Parente"
+                          disabled
+                        />
+                      </Column>
+                    </Row>
+                  ))}
+
+                {!familyMembersState.length && (
+                  <Row>
+                    <Column>
+                      <label htmlFor="patient_name">Nome</label>
+                      <Field
+                        id="patient_name"
+                        name="patient_name"
+                        placeholder="Nome"
+                        disabled
+                      />
+                    </Column>
+
+                    <Column>
+                      <label htmlFor="patient_email">E-mail</label>
+                      <Field
+                        id="patient_email"
+                        name="patient_email"
+                        placeholder="E-mail"
+                        disabled
+                      />
+                    </Column>
+                  </Row>
+                )}
 
                 <h3>Preferências do Atendimento</h3>
                 <Row>
@@ -151,29 +222,45 @@ function AppointmentsRead() {
                   </Column>
 
                   <Column>
-                    <label htmlFor="analyst_sex">Sexo do Analísta</label>
-                    <Field id="analyst_sex" name="analyst_sex" disabled />
-                  </Column>
-
-                  <Column>
-                    <label htmlFor="service_modality">
-                      Modalidade de Atendimento
+                    <label htmlFor="preference_analyst_sex">
+                      Sexo do Analísta
                     </label>
                     <Field
-                      id="service_modality"
-                      name="service_modality"
+                      id="preference_analyst_sex"
+                      name="preference_analyst_sex"
                       disabled
                     />
                   </Column>
 
                   <Column>
-                    <label htmlFor="district">Região</label>
-                    <Field id="district" name="district" disabled />
+                    <label htmlFor="preference_service_modality">
+                      Modalidade de Atendimento
+                    </label>
+                    <Field
+                      id="preference_service_modality"
+                      name="preference_service_modality"
+                      disabled
+                    />
                   </Column>
 
                   <Column>
-                    <label htmlFor="service_type">Tipos de atendimento</label>
-                    <Field id="service_type" name="service_type" disabled />
+                    <label htmlFor="preference_district">Região</label>
+                    <Field
+                      id="preference_district"
+                      name="preference_district"
+                      disabled
+                    />
+                  </Column>
+
+                  <Column>
+                    <label htmlFor="preference_service_type">
+                      Tipos de atendimento
+                    </label>
+                    <Field
+                      id="preference_service_type"
+                      name="preference_service_type"
+                      disabled
+                    />
                   </Column>
                 </Row>
 

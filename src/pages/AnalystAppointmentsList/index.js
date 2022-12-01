@@ -165,8 +165,8 @@ function AnalystAppointmentsList() {
           {appointments.length ? (
             appointments.map(appointment => (
               <tr key={appointment.id}>
-                <td>{appointment.name}</td>
-                <td>{appointment.email}</td>
+                <td>{appointment.patient_name}</td>
+                <td>{appointment.patient_email}</td>
                 <td>{getStatusName(appointment.status)}</td>
                 <td>{format(parseISO(appointment.created_at), 'dd/MM/yyyy')}</td>
                 <td>

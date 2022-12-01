@@ -12,7 +12,7 @@ function Sidebar() {
       <ModuleItens>
         <ul>
           <ModuleItens.Item active={pathname === '/analista/solicitacoes'}>
-            <Link to="/analista/solicitacaoes">
+            <Link to="/analista/solicitacoes">
               <MdCalendarToday size={22} color="#111" />
               <span>Solicitações</span>
             </Link>

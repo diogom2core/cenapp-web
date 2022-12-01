@@ -704,8 +704,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
                                   familyMembersArray.map((numberFamily) => (
                                     <>
                                       <h4>
-                                        Membro
-                                        { numberFamily}
+                                        { `Membro ${numberFamily}`}
                                       </h4>
 
                                       <div className="conditional_inputs">
