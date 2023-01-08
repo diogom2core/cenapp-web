@@ -1120,7 +1120,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
               pelo atendimento.
             </p>
             <p>
-              A base legal para essa atividade de tratamento é “execução de contrato” e os dados
+              A base legal para esse processo psicanalítico é “execução de contrato” e os dados
               serão
               armazenados pelo CENAPP durante todo o período de tratamento do paciente e, após esse
               período pelo prazo de 05 anos para exercício regular de direitos em processo judicial,
