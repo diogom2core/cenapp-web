@@ -1012,7 +1012,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
               <strong>IMPORTANTE</strong>
               <p>
                 - O atendimento pelo Cenapp não é gratuito e é sujeito à existência de vagas.
-                O valor da sessão deverá ser acordado entre o psicanalista e paciente;
+                O valor da sessão deverá ser acordado entre o psicanalista e paciente.
               </p>
               <p>
                 - O sistema fará escolha do psicanalista de acordo com as opções que você marcou
