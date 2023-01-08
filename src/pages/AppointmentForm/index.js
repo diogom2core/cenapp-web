@@ -513,7 +513,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
                               style={{ width: 250 }}
                               onChange={(whoSeeks) => setWhoSeeksCare(whoSeeks)}
                             >
-                              <Option key="mae_pai">Mão e Pai com bebê</Option>
+                              <Option key="mae_pai">Mãe e Pai com bebê</Option>
                               <Option key="mae">Mãe com bebê</Option>
                               <Option key="pai">Pai com bebê</Option>
                               <Option key="outro">Outro</Option>
