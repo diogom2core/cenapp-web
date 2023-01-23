@@ -26,20 +26,21 @@ const plainOptions = [
   'intervenções precoce',
 ];
 
+const shiftOptions = ['manhã', 'tarde', 'noite'];
+
 function AnalystCreate() {
   const [initialValues] = useState({
     name: '',
     email: '',
   });
 
-  const [shift, setShift] = useState('');
   const [district, setDistrict] = useState('');
   const [modality, setModality] = useState('');
   const [sex, setSex] = useState('');
   const [priorityLevel, setpriorityLevel] = useState('');
   const [serviceTypeList, setServiceTypeList] = useState([]);
   const [createLoading, setCreateLoading] = useState(false);
-
+  const [shiftList, setShiftList] = useState([]);
   const history = useHistory();
 
   async function createAnalyst(values) {
@@ -49,7 +50,6 @@ function AnalystCreate() {
       await api.post('/admin/analyst', {
         name,
         email,
-        shift,
         district,
         service_modality: modality,
         sex,
@@ -67,6 +67,9 @@ function AnalystCreate() {
         service_type_early_interventions: serviceTypeList.some(
           (type) => type === 'intervenções precoce',
         ),
+        moning_service: shiftList.some((type) => type === 'manhã'),
+        afternoon_service: shiftList.some((type) => type === 'tarde'),
+        night_service: shiftList.some((type) => type === 'noite'),
       });
 
       toast.success('Analista cadastrado com sucesso!');
@@ -100,23 +103,6 @@ function AnalystCreate() {
                 </Column>
 
                 <Column>
-                  <label htmlFor="period">Turno</label>
-
-                  <Select
-                    id="shift"
-                    defaultValue="Selecione o periodo"
-                    style={{ width: 205 }}
-                    onChange={(shiftValue) => setShift(shiftValue)}
-                  >
-                    <Option key="manha">Manhã</Option>
-                    <Option key="tarde">Tarde</Option>
-                    <Option key="noite">Noite</Option>
-                  </Select>
-                </Column>
-              </Row>
-
-              <Row>
-                <Column>
                   <label htmlFor="sex">Sexo do Analísta</label>
                   <Select
                     id="sex"
@@ -128,7 +114,9 @@ function AnalystCreate() {
                     <Option key="f">Feminino</Option>
                   </Select>
                 </Column>
+              </Row>
 
+              <Row>
                 <Column>
                   <label htmlFor="modality">Modalidade de Atendimento</label>
                   <Select
@@ -159,6 +147,16 @@ function AnalystCreate() {
                     </Select>
                   </Column>
                 )}
+
+                <Column>
+                  <label htmlFor="service_type">Período de atendimento</label>
+
+                  <CheckboxGroup
+                    options={shiftOptions}
+                    value={shiftList}
+                    onChange={(list) => setShiftList(list)}
+                  />
+                </Column>
               </Row>
 
               <Row>

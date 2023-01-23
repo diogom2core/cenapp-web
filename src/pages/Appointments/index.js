@@ -68,8 +68,6 @@ function Appointments() {
     loadAppointments();
   }
 
-  console.log(appointments);
-
   return (
     <Container>
       <Title>

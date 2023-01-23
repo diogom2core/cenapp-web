@@ -26,6 +26,7 @@ const plainOptions = [
   'intervenções precoce',
 ];
 
+const shiftOptions = ['manhã', 'tarde', 'noite'];
 function AnalystCreate() {
   const [initialValues, setInitialValues] = useState({
     name: '',
@@ -36,7 +37,6 @@ function AnalystCreate() {
     priority_levels: '',
   });
 
-  const [shift, setShift] = useState('');
   const [district, setDistrict] = useState('');
   const [modality, setModality] = useState('');
   const [sex, setSex] = useState('');
@@ -44,6 +44,7 @@ function AnalystCreate() {
   const [serviceTypeList, setServiceTypeList] = useState([]);
   const [createLoading, setCreateLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [shiftList, setShiftList] = useState([]);
 
   const history = useHistory();
 
@@ -56,7 +57,6 @@ function AnalystCreate() {
       const body = {
         name,
         email,
-        shift,
         district,
         service_modality: modality,
         sex,
@@ -74,6 +74,9 @@ function AnalystCreate() {
         service_type_early_interventions: serviceTypeList.some(
           (type) => type === 'intervenções precoce',
         ),
+        moning_service: shiftList.some((type) => type === 'manhã'),
+        afternoon_service: shiftList.some((type) => type === 'tarde'),
+        night_service: shiftList.some((type) => type === 'noite'),
       };
 
       await api.put(`/admin/analyst/${analyst_id}`, body);
@@ -97,6 +100,7 @@ function AnalystCreate() {
 
       setInitialValues(response.data);
       const services = [];
+      const shiftServices = [];
 
       if (response.data.service_type_adult) {
         services.push('adultos');
@@ -121,16 +125,28 @@ function AnalystCreate() {
       if (response.data.service_type_early_interventions) {
         services.push('intervenções precoce');
       }
+
       if (response.data.service_type_family) {
         services.push('família');
       }
 
+      if (response.data.moning_service) {
+        shiftServices.push('manhã');
+      }
+
+      if (response.data.afternoon_service) {
+        shiftServices.push('tarde');
+      }
+      if (response.data.night_service) {
+        shiftServices.push('noite');
+      }
+
       setServiceTypeList(services);
-      setShift(response.data.shift);
       setSex(response.data.sex);
       setDistrict(response.data.district);
       setModality(response.data.service_modality);
       setpriorityLevel(response.data.priority_levels);
+      setShiftList(shiftServices);
       setIsLoading(false);
     } catch (err) {
       const { message } = JSON.parse(err.request.responseText);
@@ -166,23 +182,6 @@ function AnalystCreate() {
                   </Column>
 
                   <Column>
-                    <label htmlFor="period">Turno</label>
-
-                    <Select
-                      id="shift"
-                      defaultValue={initialValues.shift}
-                      style={{ width: 205 }}
-                      onChange={(shiftValue) => setShift(shiftValue)}
-                    >
-                      <Option key="manha">Manhã</Option>
-                      <Option key="tarde">Tarde</Option>
-                      <Option key="noite">Noite</Option>
-                    </Select>
-                  </Column>
-                </Row>
-
-                <Row>
-                  <Column>
                     <label htmlFor="sex">Sexo do Analísta</label>
                     <Select
                       id="sex"
@@ -194,7 +193,9 @@ function AnalystCreate() {
                       <Option key="f">Feminino</Option>
                     </Select>
                   </Column>
+                </Row>
 
+                <Row>
                   <Column>
                     <label htmlFor="modality">Modalidade de Atendimento</label>
                     <Select
@@ -228,6 +229,16 @@ function AnalystCreate() {
                       </Select>
                     </Column>
                   )}
+
+                  <Column>
+                    <label htmlFor="service_type">Período de atendimento</label>
+
+                    <CheckboxGroup
+                      options={shiftOptions}
+                      value={shiftList}
+                      onChange={(list) => setShiftList(list)}
+                    />
+                  </Column>
                 </Row>
 
                 <Row>
