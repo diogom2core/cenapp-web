@@ -513,7 +513,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
                               style={{ width: 250 }}
                               onChange={(whoSeeks) => setWhoSeeksCare(whoSeeks)}
                             >
-                              <Option key="mae_pai">Mão e Pai com bebê</Option>
+                              <Option key="mae_pai">Mãe e Pai com bebê</Option>
                               <Option key="mae">Mãe com bebê</Option>
                               <Option key="pai">Pai com bebê</Option>
                               <Option key="outro">Outro</Option>
@@ -1012,7 +1012,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
               <strong>IMPORTANTE</strong>
               <p>
                 - O atendimento pelo Cenapp não é gratuito e é sujeito à existência de vagas.
-                O valor da sessão deverá ser acordado entre o psicanalista e paciente;
+                O valor da sessão deverá ser acordado entre o psicanalista e paciente.
               </p>
               <p>
                 - O sistema fará escolha do psicanalista de acordo com as opções que você marcou
@@ -1102,7 +1102,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
             <strong>IMPORTANTE</strong>
             <p>
               O atendimento pelo Cenapp não é gratuito e é sujeito à existência de vagas.
-              O valor da sessão deverá ser acordado entre o psicanalista e paciente;
+              O valor da sessão deverá ser acordado entre o psicanalista e paciente.
             </p>
           </div>
 
@@ -1120,7 +1120,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
               pelo atendimento.
             </p>
             <p>
-              A base legal para essa atividade de tratamento é “execução de contrato” e os dados
+              A base legal para esse processo psicanalítico é “execução de contrato” e os dados
               serão
               armazenados pelo CENAPP durante todo o período de tratamento do paciente e, após esse
               período pelo prazo de 05 anos para exercício regular de direitos em processo judicial,
