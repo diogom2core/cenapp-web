@@ -33,7 +33,7 @@ const REGIONS = [
   'Fercal',
   'SIA',
   'Asa sul',
-  'Asa norte'
+  'Asa norte',
 ];
 
 export default REGIONS;
