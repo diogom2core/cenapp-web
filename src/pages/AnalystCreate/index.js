@@ -9,10 +9,12 @@ import { Row, Select, Checkbox, Switch } from 'antd';
 
 import { toast } from 'react-toastify';
 import { useHistory } from 'react-router-dom';
+import MaskedInput from 'react-text-mask';
 import { Container, BoxEdit, Column } from './styles';
 import api from '../../services/api';
 import Button from '../../components/Button';
 import REGIONS from '../../helpers/regions';
+import { phoneNumberMask } from '../../helpers/masks';
 
 const { Option } = Select;
 const CheckboxGroup = Checkbox.Group;
@@ -48,7 +50,7 @@ function AnalystCreate() {
   async function createAnalyst(values) {
     setCreateLoading(true);
     try {
-      const { name, email } = values;
+      const { name, email, phone_number } = values;
       await api.post('/admin/analyst', {
         name,
         email,
@@ -73,6 +75,7 @@ function AnalystCreate() {
         afternoon_service: shiftList.some((type) => type === 'tarde'),
         night_service: shiftList.some((type) => type === 'noite'),
         is_available: isAnalystAvailable,
+        phone_number,
       });
 
       toast.success('Analista cadastrado com sucesso!');
@@ -92,7 +95,7 @@ function AnalystCreate() {
       <h2>Criação de Analista</h2>
       <BoxEdit>
         <Formik initialValues={initialValues} onSubmit={createAnalyst}>
-          {() => (
+          {({ handleChange, handleBlur }) => (
             <Form>
               <Row>
                 <Column>
@@ -205,6 +208,25 @@ function AnalystCreate() {
                     defaultChecked
                     checked={isAnalystAvailable}
                     onChange={() => setIsAnalystAvailable(!isAnalystAvailable)}
+                  />
+                </Column>
+
+                <Column>
+                  <label htmlFor="phone_number">Telefone celular</label>
+                  <Field
+                    name="phone_number"
+                    render={({ field }) => (
+                      <MaskedInput
+                        {...field}
+                        id="phone_number"
+                        name="phone_number"
+                        mask={phoneNumberMask}
+                        placeholder="Telefone"
+                        type="text"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                    )}
                   />
                 </Column>
               </Row>
