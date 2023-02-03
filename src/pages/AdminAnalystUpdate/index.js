@@ -5,7 +5,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState, useEffect } from 'react';
 import { Field, Form, Formik } from 'formik';
-import { Row, Select, Checkbox } from 'antd';
+import { Row, Select, Checkbox, Switch } from 'antd';
 
 import { toast } from 'react-toastify';
 import { useHistory, useParams } from 'react-router-dom';
@@ -45,6 +45,7 @@ function AnalystCreate() {
   const [createLoading, setCreateLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [shiftList, setShiftList] = useState([]);
+  const [isAnalystAvailable, setIsAnalystAvailable] = useState(true);
 
   const history = useHistory();
 
@@ -77,6 +78,7 @@ function AnalystCreate() {
         moning_service: shiftList.some((type) => type === 'manhã'),
         afternoon_service: shiftList.some((type) => type === 'tarde'),
         night_service: shiftList.some((type) => type === 'noite'),
+        is_available: isAnalystAvailable,
       };
 
       await api.put(`/admin/analyst/${analyst_id}`, body);
@@ -147,6 +149,7 @@ function AnalystCreate() {
       setModality(response.data.service_modality);
       setpriorityLevel(response.data.priority_levels);
       setShiftList(shiftServices);
+      setIsAnalystAvailable(response.data.is_available);
       setIsLoading(false);
     } catch (err) {
       const { message } = JSON.parse(err.request.responseText);
@@ -272,6 +275,21 @@ function AnalystCreate() {
                       </Option>
                       <Option key="3">nível 3: membros da SPBsb</Option>
                     </Select>
+                  </Column>
+                </Row>
+
+                <Row>
+                  <Column>
+                    <label htmlFor="available">
+                      Disponível para receber solicitações ?
+                    </label>
+                    <Switch
+                      defaultChecked
+                      checked={isAnalystAvailable}
+                      onChange={() =>
+                        setIsAnalystAvailable(!isAnalystAvailable)
+                      }
+                    />
                   </Column>
                 </Row>
 

@@ -5,7 +5,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState } from 'react';
 import { Field, Form, Formik } from 'formik';
-import { Row, Select, Checkbox } from 'antd';
+import { Row, Select, Checkbox, Switch } from 'antd';
 
 import { toast } from 'react-toastify';
 import { useHistory } from 'react-router-dom';
@@ -40,6 +40,8 @@ function AnalystCreate() {
   const [priorityLevel, setpriorityLevel] = useState('');
   const [serviceTypeList, setServiceTypeList] = useState([]);
   const [createLoading, setCreateLoading] = useState(false);
+  const [isAnalystAvailable, setIsAnalystAvailable] = useState(true);
+
   const [shiftList, setShiftList] = useState([]);
   const history = useHistory();
 
@@ -70,6 +72,7 @@ function AnalystCreate() {
         moning_service: shiftList.some((type) => type === 'manhã'),
         afternoon_service: shiftList.some((type) => type === 'tarde'),
         night_service: shiftList.some((type) => type === 'noite'),
+        is_available: isAnalystAvailable,
       });
 
       toast.success('Analista cadastrado com sucesso!');
@@ -190,6 +193,19 @@ function AnalystCreate() {
                     </Option>
                     <Option key="3">nível 3: membros da SPBsb</Option>
                   </Select>
+                </Column>
+              </Row>
+
+              <Row>
+                <Column>
+                  <label htmlFor="available">
+                    Disponível para receber solicitações ?
+                  </label>
+                  <Switch
+                    defaultChecked
+                    checked={isAnalystAvailable}
+                    onChange={() => setIsAnalystAvailable(!isAnalystAvailable)}
+                  />
                 </Column>
               </Row>
 
