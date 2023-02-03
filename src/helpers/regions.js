@@ -2,7 +2,6 @@ const REGIONS = [
   'Cidade',
   'Ceilândia',
   'Samambaia',
-  'Plano Piloto',
   'Taguatinga',
   'Planaltina',
   'Guará',
@@ -33,6 +32,8 @@ const REGIONS = [
   'Varjão',
   'Fercal',
   'SIA',
+  'Asa sul',
+  'Asa norte',
 ];
 
 export default REGIONS;
