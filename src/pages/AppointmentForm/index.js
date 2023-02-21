@@ -153,7 +153,7 @@ function AppointmentForm() {
 
       setLoading(false);
 
-      toast.success('Agendamento feito com sucesso!');
+      toast.success('Encaminhamento feito com sucesso!');
       setIsAppoitmentFinish(true);
       setIsOpen(false);
       setIsOpenModalAnalystAvailable(false);
@@ -228,7 +228,7 @@ function AppointmentForm() {
               }) => (
                 <>
 
-                  <h3>Formulário de Agendamento</h3>
+                  <h3>Formulário de Encaminhamento</h3>
 
                   <Form>
 
@@ -1110,7 +1110,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
             <strong>Aviso de Privacidade</strong>
             <p>
               Os dados coletados pelo CENAPP neste formulário serão utilizados para confirmar a
-              identidade do solicitante, agendamento e confirmação de consultas e registro de
+              identidade do solicitante, encaminhamento e confirmação de consultas e registro de
               solicitações de atendimento. Sem esses dados mínimos não é possível realizar o
               atendimento do paciente.
             </p>
