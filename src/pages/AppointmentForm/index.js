@@ -983,9 +983,9 @@ errors.patient_two_birthday && touched.patient_two_birthday
             <AppoitmentFinish>
               <img src={appointmentFinish} alt="" />
 
-              <h3>Agendamento cadastrado</h3>
+              <h3>Encaminhamento Registrado</h3>
               <p>
-                Seu agendamento foi cadastrado, você receberá uma e-mail com
+                Seu encaminhamento foi realizado, você receberá uma e-mail com
                 dados de confirmação
               </p>
               <p>
@@ -1069,7 +1069,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
               </p>
               <p>Você pode:</p>
               <p>
-                1. Rever critérios do agendamento
+                1. Rever critérios do encaminhamento
               </p>
               <p>
                 2. Aguardar a disponibilidade de um analista (período de 1 mês)
