@@ -193,7 +193,7 @@ function AppointmentForm() {
         O atendimento psicanalítico é realizado preferencialmente 3 vezes por semana.`;
       case 'interverncoes':
         return `LEIA COM ATENÇÃO:
-          Intervenção precoce é um tipo de atendimento em que a mãe e/ou pai ou responsável (is) juntamente com o bebê (até 3 anos)  são atendidos em consultório e que visa trabalhar demandas dos vínculos pais/bebê, prevenindo patologias futuras.
+        Intervenção precoce é um tipo de atendimento em que a mãe e/ou pai ou responsável/responsáveis juntamente com o bebê (até 3 anos) são atendidos em consultório. O atendimento visa trabalhar demandas dos vínculos pais/bebê, prevenindo patologias futuras.
           O atendimento psicanalítico é realizado 1 vez por semana.`;
       default:
         return 'Selecione o tipo de serviço';
