@@ -1131,7 +1131,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
           <footer className="content-footer c">
             <span onClick={() => setIsModalWarningOpen(false)}>Cancelar</span>
             <button type="button" onClick={() => setIsModalWarningOpen(false)}>
-              Confirmar
+              Li e concordo
             </button>
           </footer>
         </div>
