@@ -153,7 +153,7 @@ function AppointmentForm() {
 
       setLoading(false);
 
-      toast.success('Agendamento feito com sucesso!');
+      toast.success('Encaminhamento feito com sucesso!');
       setIsAppoitmentFinish(true);
       setIsOpen(false);
       setIsOpenModalAnalystAvailable(false);
@@ -193,7 +193,7 @@ function AppointmentForm() {
         O atendimento psicanalítico é realizado preferencialmente 3 vezes por semana.`;
       case 'interverncoes':
         return `LEIA COM ATENÇÃO:
-          Intervenção precoce é um tipo de atendimento em que a mãe e/ou pai ou responsável (is) juntamente com o bebê (até 3 anos)  são atendidos em consultório e que visa trabalhar demandas dos vínculos pais/bebê, prevenindo patologias futuras.
+        Intervenção precoce é um tipo de atendimento em que a mãe e/ou pai ou responsável/responsáveis juntamente com o bebê (até 3 anos) são atendidos em consultório. O atendimento visa trabalhar demandas dos vínculos pais/bebê, prevenindo patologias futuras.
           O atendimento psicanalítico é realizado 1 vez por semana.`;
       default:
         return 'Selecione o tipo de serviço';
@@ -228,7 +228,7 @@ function AppointmentForm() {
               }) => (
                 <>
 
-                  <h3>Formulário de Agendamento</h3>
+                  <h3>Formulário de Encaminhamento</h3>
 
                   <Form>
 
@@ -983,9 +983,9 @@ errors.patient_two_birthday && touched.patient_two_birthday
             <AppoitmentFinish>
               <img src={appointmentFinish} alt="" />
 
-              <h3>Agendamento cadastrado</h3>
+              <h3>Encaminhamento Registrado</h3>
               <p>
-                Seu agendamento foi cadastrado, você receberá uma e-mail com
+                Seu encaminhamento foi realizado, você receberá uma e-mail com
                 dados de confirmação
               </p>
               <p>
@@ -1069,7 +1069,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
               </p>
               <p>Você pode:</p>
               <p>
-                1. Rever critérios do agendamento
+                1. Rever critérios do encaminhamento
               </p>
               <p>
                 2. Aguardar a disponibilidade de um analista (período de 1 mês)
@@ -1110,7 +1110,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
             <strong>Aviso de Privacidade</strong>
             <p>
               Os dados coletados pelo CENAPP neste formulário serão utilizados para confirmar a
-              identidade do solicitante, agendamento e confirmação de consultas e registro de
+              identidade do solicitante, encaminhamento e confirmação de consultas e registro de
               solicitações de atendimento. Sem esses dados mínimos não é possível realizar o
               atendimento do paciente.
             </p>
@@ -1131,7 +1131,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
           <footer className="content-footer c">
             <span onClick={() => setIsModalWarningOpen(false)}>Cancelar</span>
             <button type="button" onClick={() => setIsModalWarningOpen(false)}>
-              Confirmar
+              Li e concordo
             </button>
           </footer>
         </div>
