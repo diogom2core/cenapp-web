@@ -40,6 +40,10 @@ export const BoxVisualization = styled.div`
     background: #ececec !important;
   }
 
+  .button {
+    margin: 40px auto 0 auto;
+  }
+
   h3 {
     color: #3f3f3f;
     font-size: 18px;
@@ -110,6 +114,14 @@ export const BoxVisualization = styled.div`
     button {
       color: #fff;
       background-color: #40d4c3;
+    }
+  }
+
+  ul {
+    margin-top: 40px;
+    li {
+      font-size: 13px;
+      line-height: 26px;
     }
   }
 `;

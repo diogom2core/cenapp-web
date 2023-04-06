@@ -111,7 +111,6 @@ function Appointments() {
                 selectedDays={startDateSelected}
                 weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
                 onDayClick={setStartDateSelected}
-                locale={pt}
               />
             </SelectDate>
           </FilterDate>
@@ -131,7 +130,6 @@ function Appointments() {
                 selectedDays={endDateSelected}
                 weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
                 onDayClick={setEndDateSelected}
-                locale={pt}
               />
             </SelectDate>
           </FilterDate>
