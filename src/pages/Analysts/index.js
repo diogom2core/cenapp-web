@@ -1,9 +1,10 @@
+/* eslint-disable react/jsx-no-bind */
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/jsx-one-expression-per-line */
 import { format, parseISO } from 'date-fns';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Select } from 'antd';
+import { Button, Select } from 'antd';
 import {
   MdClose,
   MdModeEditOutline,
@@ -11,19 +12,26 @@ import {
 import {
   IoTrashBinSharp,
 } from 'react-icons/io5';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 import { toast } from 'react-toastify';
+import { CloudDownloadOutlined } from '@ant-design/icons';
 import api from '../../services/api';
 import { Container, Table, Form, Pagination, Title, Filters, FilterItem, ModalConfirm } from './styles';
 import Loading from '../../components/Loading';
 import REGIONS from '../../helpers/regions';
+import { getSexName } from '../Appointments/utils/getSexName';
+import { getServicesType } from './utils/getServicesType';
+import { getPreferenceTime } from '../Appointments/utils/getPreferenceTime';
 
 const { Option } = Select;
 function AnalystList() {
   const [analysts, setAnalysts] = useState([]);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [searchWord, setSearchWord] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingExport, setLoadingExport] = useState(false);
 
   const [shift, setShift] = useState('');
   const [district, setDistrict] = useState('');
@@ -93,11 +101,73 @@ function AnalystList() {
     setAnalystIDToRemove(analyst_id);
   }
 
+  async function generateExcelFile() {
+    try {
+      setLoadingExport(true);
+      const districtFormmated = district !== 'null' ? district.toLowerCase() : district;
+
+      const response = await api.get(`/admin/analyst/search/export/?search=${searchWord}&shift=${shift}&district=${districtFormmated}&service_modality=${modality}&sex=${sex}`);
+      const analystToBeExport = response.data;
+
+      const appointmentsToBeExportFormmated = analystToBeExport.map(analystItem => ({
+        link: `https://agendamento-clinica-web.vercel.app/admin/analistas/editar/${analystItem.id}`,
+        nome: analystItem.name,
+        email: analystItem.email,
+        bairro: analystItem.district,
+        sexo: getSexName(analystItem.sex),
+        modalidade: analystItem.service_modality,
+        cidade: analystItem.preference_district,
+        disponivel: analystItem.is_available ? 'Sim' : 'Não',
+        prioridade: analystItem.priority_levels,
+        tipo_atendimento: getServicesType({
+          service_type_adult: analystItem.service_type_adult,
+          service_type_elderly: analystItem.service_type_elderly,
+          service_type_children: analystItem.service_type_children,
+          service_type_adolescent: analystItem.service_type_adolescent,
+          service_type_couple: analystItem.service_type_couple,
+          service_type_family: analystItem.service_type_family,
+          service_type_early_interventions: analystItem.service_type_early_interventions,
+        }),
+        horario_atendimento: getPreferenceTime({
+          preference_afternoon_service: analystItem.afternoon_service,
+          preference_morning_service: analystItem.moning_service,
+          preference_night_service: analystItem.night_service,
+        }),
+        data_criacao: analystItem.created_at,
+      }));
+
+      const workbook = XLSX.utils.book_new();
+
+      const worksheet = XLSX.utils.json_to_sheet(appointmentsToBeExportFormmated);
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Analistas');
+
+      const excelFileData = XLSX.write(workbook, { type: 'array', bookType: 'xlsx' });
+
+      const blob = new Blob([excelFileData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+      saveAs(blob, 'analistas.xlsx');
+      setLoadingExport(false);
+    } catch (error) {
+      setLoadingExport(false);
+      toast.error('Erro ao exportar dados');
+    }
+  }
+
   return (
     <Container>
       <Title>
         <h2>Analistas</h2>
-        <Link to="/analistas/cadastro">Cadastrar</Link>
+
+        <div>
+          <Link to="/analistas/cadastro">Cadastrar</Link>
+          <Button
+            loading={loadingExport}
+            onClick={generateExcelFile}
+            icon={<CloudDownloadOutlined />}
+          >Exportar
+          </Button>
+        </div>
       </Title>
 
       <Filters>

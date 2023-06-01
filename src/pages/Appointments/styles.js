@@ -13,17 +13,23 @@ export const Container = styled.div`
 
 export const Title = styled.div`
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 
-  h2 {
-    color: #111;
-    font-weight: 600;
-    margin: 0;
-    font-size: 22px;
-  }
+  > div {
+    display: flex;
+    flex-direction: column;
 
-  span {
-    font-size: 13px;
+    h2 {
+      color: #111;
+      font-weight: 600;
+      margin: 0;
+      font-size: 22px;
+    }
+
+    span {
+      font-size: 13px;
+    }
   }
 `;
 

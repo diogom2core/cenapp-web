@@ -14,6 +14,7 @@ export const Container = styled.div`
 export const Title = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
 
   h2 {
     color: #111;
@@ -23,7 +24,7 @@ export const Title = styled.div`
   }
 
   a {
-    margin-left: 20px;
+    margin-right: 20px;
   }
 `;
 

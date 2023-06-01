@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable prettier/prettier */
 import { Field, Form, Formik } from 'formik';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { MdClose } from 'react-icons/md';
 
 import { Select, Radio, Checkbox, Divider } from 'antd';
@@ -60,7 +60,7 @@ function AppointmentForm() {
     (_, i) => i + 1,
   ), [howManyFamilyMembers]);
 
-  const sendAppointment = useCallback(async (type) => {
+  const sendAppointment = async (type) => {
     try {
       setLoading(true);
 
@@ -164,7 +164,7 @@ function AppointmentForm() {
     } finally {
       setLoading(false);
     }
-  }, [formValues]);
+  };
 
   function getServiceTypeMessage(serviceTypeValue) {
     switch (serviceTypeValue) {
@@ -907,7 +907,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
                           >
                             <Option key="m">Homem</Option>
                             <Option key="f">Mulher</Option>
-                           // <Option key="i">Indiferente</Option>
+                            <Option key="i">Indiferente</Option>
                           </Select>
                         </Fild>
 
@@ -922,7 +922,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
                           >
                             <Option key="presencial">Presencial</Option>
                             <Option key="online">Online</Option>
-                            // <Option key="indiferente">Indiferente</Option>
+                            <Option key="indiferente">Indiferente</Option>
                           </Select>
                         </Fild>
 

@@ -133,7 +133,7 @@ function AnalystCreate() {
                   >
                     <Option key="online">Online</Option>
                     <Option key="presencial">Presencial</Option>
-                   
+                    <Option key="hibrido">Hibrido</Option>
                   </Select>
                 </Column>
 

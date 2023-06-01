@@ -1,13 +1,21 @@
+/* eslint-disable react/jsx-no-bind */
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/jsx-one-expression-per-line */
-import { Select } from 'antd';
+import { Button, Select } from 'antd';
 import { format, parseISO, subDays } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MdDateRange, MdVisibility } from 'react-icons/md';
 import DayPicker from 'react-day-picker';
 import { pt } from 'date-fns/locale';
+import { CloudDownloadOutlined } from '@ant-design/icons';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+
+import { toast } from 'react-toastify';
 import getStatusName from '../../helpers/getStatusName';
+import { getPreferenceTime } from './utils/getPreferenceTime';
+import { getSexName } from './utils/getSexName';
 
 import api from '../../services/api';
 import { Container, Table, Form, Pagination, Title, Filters, FilterItem, FilterDate, SelectDate } from './styles';
@@ -18,9 +26,12 @@ const { Option } = Select;
 
 function Appointments() {
   const [appointments, setAppointments] = useState([]);
-  const [page, setPage] = useState(0);
+  const [appointmentsTotal, setAppointmentsTotal] = useState(0);
+
+  const [page, setPage] = useState(1);
   const [searchWord, setSearchWord] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingExport, setLoadingExport] = useState(false);
 
   const [filterStatus, setFilterStatus] = useState('');
 
@@ -31,9 +42,20 @@ function Appointments() {
 
   async function loadAppointments() {
     setIsLoading(true);
-    const response = await api.get('/appointments/search');
+    const response = await api.get(`/appointments/search/?page=${page}&start_date=${startDateSelected}&end_date=${endDateSelected}&status=${filterStatus}`);
 
-    setAppointments(response.data);
+    setAppointments(response.data.appointments);
+    setAppointmentsTotal(response.data.total);
+    setIsLoading(false);
+  }
+
+  async function loadSearchAppointments() {
+    setIsLoading(true);
+    const response = await api.get(`/appointments/search/?page=${page}&search=${searchWord}&start_date=${startDateSelected}&end_date=${endDateSelected}&status=${filterStatus}`);
+
+    setAppointments(response.data.appointments);
+    setAppointmentsTotal(response.data.total);
+
     setIsLoading(false);
   }
 
@@ -42,17 +64,17 @@ function Appointments() {
   }, []);
 
   useEffect(() => {
-    setIsLoading(true);
-    api.get(`/appointments/search/?page=${page}`).then(response => {
-      setAppointments(response.data);
-      setIsLoading(false);
-    });
+    if (page) {
+      loadSearchAppointments();
+    }
   }, [page]);
 
   async function searchAppointment() {
     setIsLoading(true);
     const response = await api.get(`/appointments/search/?search=${searchWord}&start_date=${startDateSelected}&end_date=${endDateSelected}&status=${filterStatus}`);
-    setAppointments(response.data);
+
+    setAppointments(response.data.appointments);
+    setAppointmentsTotal(response.data.total);
     setIsLoading(false);
   }
 
@@ -68,16 +90,71 @@ function Appointments() {
     loadAppointments();
   }
 
+  async function generateExcelFile() {
+    try {
+      setLoadingExport(true);
+      const response = await api.get(`/appointments/export/?search=${searchWord}&start_date=${startDateSelected}&end_date=${endDateSelected}&status=${filterStatus}`);
+      const appointmentsToBeExport = response.data;
+
+      const appointmentsToBeExportFormmated = appointmentsToBeExport.map(appointmentItem => ({
+        link: `https://agendamento-clinica-web.vercel.app/solicitacoes/ver/${appointmentItem.id}`,
+        status: getStatusName(appointmentItem.status),
+        tipo_servico: appointmentItem.preference_service_type,
+        paciente: appointmentItem.patient_name,
+        email: appointmentItem.patient_email,
+        sexo: getSexName(appointmentItem.patient_sex),
+        telefone: appointmentItem.patient_phone_number,
+        paciente_2: appointmentItem.patient_two_name,
+        email_paciente_2: appointmentItem.patient_two_email,
+        sexo_paciente_2: getSexName(appointmentItem.patient_two_sex),
+        telefone_paciente_2: appointmentItem.patient_two_phone_number,
+        horario_atendimento: getPreferenceTime({
+          preference_afternoon_service: appointmentItem.preference_afternoon_service,
+          preference_morning_service: appointmentItem.preference_morning_service,
+          preference_night_service: appointmentItem.preference_night_service,
+        }),
+        modalidade: appointmentItem.preference_service_modality,
+        cidade: appointmentItem.preference_district,
+        data_criacao: appointmentItem.created_at,
+      }));
+
+      const workbook = XLSX.utils.book_new();
+
+      const worksheet = XLSX.utils.json_to_sheet(appointmentsToBeExportFormmated);
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Agendamentos');
+
+      const excelFileData = XLSX.write(workbook, { type: 'array', bookType: 'xlsx' });
+
+      const blob = new Blob([excelFileData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+      saveAs(blob, 'agendamentos.xlsx');
+      setLoadingExport(false);
+    } catch (error) {
+      setLoadingExport(false);
+      toast.error('Erro ao exportar dados');
+    }
+  }
+
   return (
     <Container>
       <Title>
-        <h2>Solicitações</h2>
-        <span>{format(startDateSelected, 'dd/MM/yyyy', {
-          locale: pt,
-        })} - {format(endDateSelected, 'dd/MM/yyyy', {
-          locale: pt,
-        })}
-        </span>
+        <div>
+          <h2>Solicitações</h2>
+          <span>{format(startDateSelected, 'dd/MM/yyyy', {
+            locale: pt,
+          })} - {format(endDateSelected, 'dd/MM/yyyy', {
+            locale: pt,
+          })}
+          </span>
+        </div>
+
+        <Button
+          loading={loadingExport}
+          onClick={generateExcelFile}
+          icon={<CloudDownloadOutlined />}
+        >Exportar
+        </Button>
       </Title>
 
       <Filters>
@@ -157,7 +234,7 @@ function Appointments() {
 
       </Filters>
 
-      {!isLoading && (
+      {!isLoading && !!appointments.length && (
       <>
 
         <Table>
@@ -206,7 +283,7 @@ function Appointments() {
         <Pagination
           onChange={setPage}
           current={page}
-          total={appointments.total}
+          total={appointmentsTotal}
           showSizeChanger={false}
           defaultPageSize={10}
         />
