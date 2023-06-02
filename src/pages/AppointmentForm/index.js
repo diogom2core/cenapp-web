@@ -907,7 +907,6 @@ errors.patient_two_birthday && touched.patient_two_birthday
                           >
                             <Option key="m">Homem</Option>
                             <Option key="f">Mulher</Option>
-                            <Option key="i">Indiferente</Option>
                           </Select>
                         </Fild>
 
@@ -922,7 +921,6 @@ errors.patient_two_birthday && touched.patient_two_birthday
                           >
                             <Option key="presencial">Presencial</Option>
                             <Option key="online">Online</Option>
-                            <Option key="indiferente">Indiferente</Option>
                           </Select>
                         </Fild>
 
