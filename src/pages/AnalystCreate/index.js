@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/label-has-for */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Field, Form, Formik } from 'formik';
 import { Row, Select, Checkbox, Switch } from 'antd';
 
@@ -30,6 +30,8 @@ const plainOptions = [
 
 const shiftOptions = ['manhã', 'tarde', 'noite'];
 
+const serviceModalities = ['presencial', 'online'];
+
 function AnalystCreate() {
   const [initialValues] = useState({
     name: '',
@@ -37,7 +39,7 @@ function AnalystCreate() {
   });
 
   const [district, setDistrict] = useState('');
-  const [modality, setModality] = useState('');
+  const [modality, setModality] = useState([]);
   const [sex, setSex] = useState('');
   const [priorityLevel, setpriorityLevel] = useState('');
   const [serviceTypeList, setServiceTypeList] = useState([]);
@@ -55,7 +57,6 @@ function AnalystCreate() {
         name,
         email,
         district,
-        service_modality: modality,
         sex,
         priority_levels: Number(priorityLevel),
         service_type_adult: serviceTypeList.some((type) => type === 'adultos'),
@@ -76,6 +77,8 @@ function AnalystCreate() {
         night_service: shiftList.some((type) => type === 'noite'),
         is_available: isAnalystAvailable,
         phone_number,
+        modality_onsite: modality.some((type) => type === 'presencial'),
+        modality_online: modality.some((type) => type === 'online'),
       });
 
       toast.success('Analista cadastrado com sucesso!');
@@ -89,6 +92,11 @@ function AnalystCreate() {
       setCreateLoading(false);
     }
   }
+
+  const isModalityOnSite = useMemo(
+    () => modality.some((type) => type === 'presencial'),
+    [modality],
+  );
 
   return (
     <Container>
@@ -124,19 +132,27 @@ function AnalystCreate() {
 
               <Row>
                 <Column>
-                  <label htmlFor="modality">Modalidade de Atendimento</label>
-                  <Select
-                    id="modality"
-                    defaultValue="Modalidade de atendimento"
-                    style={{ width: 205 }}
-                    onChange={(valueModality) => setModality(valueModality)}
-                  >
-                    <Option key="online">Online</Option>
-                    <Option key="presencial">Presencial</Option>
-                  </Select>
+                  <label htmlFor="service_type">
+                    Modalidade de Atendimento
+                  </label>
+
+                  <CheckboxGroup
+                    options={serviceModalities}
+                    value={modality}
+                    onChange={(list) => setModality(list)}
+                  />
+                </Column>
+                <Column>
+                  <label htmlFor="service_type">Período de atendimento</label>
+
+                  <CheckboxGroup
+                    options={shiftOptions}
+                    value={shiftList}
+                    onChange={(list) => setShiftList(list)}
+                  />
                 </Column>
 
-                {(modality === 'hibrido' || modality === 'presencial') && (
+                {isModalityOnSite && (
                   <Column>
                     <label htmlFor="district">Bairro</label>
 
@@ -152,16 +168,6 @@ function AnalystCreate() {
                     </Select>
                   </Column>
                 )}
-
-                <Column>
-                  <label htmlFor="service_type">Período de atendimento</label>
-
-                  <CheckboxGroup
-                    options={shiftOptions}
-                    value={shiftList}
-                    onChange={(list) => setShiftList(list)}
-                  />
-                </Column>
               </Row>
 
               <Row>
