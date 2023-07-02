@@ -340,8 +340,8 @@ function AppointmentsRead() {
                 <Option key="pedding">Pendente</Option>
                 <Option key="scheduled">Agendado</Option>
                 <Option key="canceled">Cancelado</Option>
-                <Option key="interviewed">Fez entrrevista</Option>
-                <Option key="not_interview">Não Fez entrrevista</Option>
+                <Option key="interviewed">Fez entrevista</Option>
+                <Option key="not_interview">Não Fez entrevista</Option>
                 <Option key="service_started">Iniciou atendimento</Option>
                 <Option key="not_service_started">
                   Não Iniciou atendimento
