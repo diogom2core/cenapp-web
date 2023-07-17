@@ -905,8 +905,8 @@ errors.patient_two_birthday && touched.patient_two_birthday
                             style={{ width: 205 }}
                             onChange={(sexValue) => setPreferenceAnalystSex(sexValue)}
                           >
-                            <Option key="m">Homem</Option>
-                            <Option key="f">Mulher</Option>
+                            <Option key="m">Masculino</Option>
+                            <Option key="f">Feminino</Option>
                           </Select>
                         </Fild>
 
