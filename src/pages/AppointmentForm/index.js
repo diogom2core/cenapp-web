@@ -529,7 +529,7 @@ errors.patient_two_birthday && touched.patient_two_birthday
                                   onChange={(event) => setPatientMadeRequest(event.target.value)}
                                   value={patientMadeRequest}
                                 >
-                                  <Radio value="mae">Mão</Radio>
+                                  <Radio value="mae">Mãe</Radio>
                                   <Radio value="pai">Pai</Radio>
                                   <Radio value="ambos">Ambos</Radio>
                                 </Radio.Group>
