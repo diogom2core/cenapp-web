@@ -307,7 +307,7 @@ function AppointmentForm() {
                             </Fild>
                           </div>
 
-                          <h4>Responsável pela Paciente</h4>
+                          <h4>Responsável pelo Paciente</h4>
 
                           <div className="conditional_inputs">
                             <Fild>
