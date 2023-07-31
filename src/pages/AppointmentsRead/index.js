@@ -113,7 +113,6 @@ function AppointmentsRead() {
       setButtonLoading(false);
     }
   };
-  console.log({ appointment });
 
   return (
     <Container>
