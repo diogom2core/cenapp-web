@@ -4,7 +4,7 @@ import { Pagination as PaginationAnt } from 'antd';
 export const Container = styled.div`
   height: 100%;
   margin-top: 35px;
-  max-width: 900px;
+  max-width: 1600px;
   width: 100%;
   margin-left: 70px;
   margin-right: 70px;
@@ -37,7 +37,7 @@ export const Filters = styled.div`
   background: #fff;
   display: flex;
   flex-wrap: wrap;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
   padding: 30px 20px;
   margin-top: 30px;
   margin-bottom: 60px;
@@ -91,66 +91,6 @@ export const Form = styled.div`
     padding: 10px 30px;
     cursor: pointer;
     color: #349cf7;
-  }
-`;
-
-export const Table = styled.table`
-  width: 100%;
-  margin-top: 25px;
-  border: none;
-  border-collapse: separate;
-  color: #111;
-  border-spacing: 0 1em;
-
-  thead {
-    tr {
-      td {
-        padding: 0 15px;
-        font-weight: 600;
-
-        &:last-child {
-          text-align: center;
-        }
-      }
-    }
-  }
-
-  tbody {
-    tr {
-      &.error {
-        color: #000;
-        text-align: center;
-        display: table-row;
-        height: 140px;
-
-        td {
-          background: none;
-          font-size: 16px;
-        }
-      }
-
-      td {
-        font-size: 14px;
-        height: 40px;
-        padding: 0 15px;
-        background: #fff;
-
-        a {
-          margin: 10px;
-        }
-
-        &:first-child {
-          border-bottom-left-radius: 20px;
-          border-top-left-radius: 20px;
-        }
-
-        &:last-child {
-          text-align: center;
-          border-bottom-right-radius: 20px;
-          border-top-right-radius: 20px;
-        }
-      }
-    }
   }
 `;
 

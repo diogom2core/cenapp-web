@@ -2,101 +2,59 @@
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable function-paren-newline */
 import React, { useCallback, useEffect, useState } from 'react';
-import { Field, Form, Formik } from 'formik';
-import { Row, Select as ANTDSelect } from 'antd';
+import { Row, Select as ANTDSelect, Button } from 'antd';
 import { MdClose } from 'react-icons/md';
 import Select from 'react-select';
 
 import { useHistory, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import ReactDatePicker, { registerLocale } from 'react-datepicker';
+
+import { pt } from 'date-fns/locale';
+import { parseISO } from 'date-fns';
 import {
   Container,
   BoxVisualization,
-  Column,
   ButtonContainer,
   ModalConfirm,
+  Title,
+  DateInputBox,
+  InfoExtra,
+  Fild,
 } from './styles';
 import api from '../../services/api';
 import Loading from '../../components/Loading';
-import Button from '../../components/Button';
+import { AppointmentInfo } from './components/AppointmentInfo';
 
 const { Option } = ANTDSelect;
 
 function AppointmentsRead() {
-  const [initialValues, setInitialValues] = useState({
-    patient_name: '',
-    patient_email: '',
-    shift: '',
-    preference_analyst_sex: '',
-    preference_service_modality: '',
-    preference_district: '',
-    preference_service_type: '',
-    analyst_name: '',
-    analyst_email: '',
-    family_members: [],
-  });
+  registerLocale('pt', pt);
+
+  const [appointment, setAppointment] = useState();
   const [loading, setLoading] = useState(true);
   const { appointment_id } = useParams();
-  const [analyst, setAnalyst] = useState(null);
   const [isModalManualAppointmentOpen, setIsModalManualAppointmentOpen] =
     useState(false);
   const [analysts, setAnalysts] = useState();
   const [isLoadAnalysts, setIsLoadAnalysts] = useState(false);
   const [analystSelected, setAnalystSelected] = useState('');
-  const [familyMembersState, setFamilyMembersState] = useState([]);
 
   const [status, setStatus] = useState('');
   const [buttonLoading, setButtonLoading] = useState(false);
   const history = useHistory();
 
-  function getShift(night_service, afternoon_service, morning_service) {
-    const shiftResult = [];
-
-    if (morning_service) {
-      shiftResult.push(' Manhã ');
-    }
-
-    if (afternoon_service) {
-      shiftResult.push(' Tarde ');
-    }
-
-    if (night_service) {
-      shiftResult.push(' Noite ');
-    }
-
-    return shiftResult.toString();
-  }
+  const [startDate, setStartDate] = useState(new Date());
+  const [frequency, setFrequency] = useState('');
 
   const loadAppointment = async () => {
     try {
       const response = await api.get(`/appointments/read/${appointment_id}`);
       setStatus(response.data.status);
+      setStartDate(parseISO(response.data.service_start_date));
+      setFrequency(response.data.service_frequency);
+      setAppointment(response.data);
 
-      const familyMembers = response.data.family_members;
-
-      const familyFormatted = {};
-
-      familyMembers.map((family, index) => {
-        familyFormatted[`member_name_${index}`] = family.name;
-        familyFormatted[`member_email_${index}`] = family.email;
-        familyFormatted[`member_birthday_${index}`] = family.birthday;
-        familyFormatted[`member_kinship_${index}`] = family.kinship;
-      });
-
-      setFamilyMembersState(response.data.family_members);
-
-      setInitialValues({
-        ...response.data,
-        shift: getShift(
-          response.data.preference_night_service,
-          response.data.preference_afternoon_service,
-          response.data.preference_morning_service,
-        ),
-        analyst_name: response.data.analyst && response.data.analyst.name,
-        analyst_email: response.data.analyst && response.data.analyst.email,
-        ...familyFormatted,
-      });
-      setAnalyst(response.data.analyst);
       setLoading(false);
     } catch (error) {
       toast.error('Erro ao carregar solicitação');
@@ -144,6 +102,8 @@ function AppointmentsRead() {
       setButtonLoading(true);
       await api.put(`/analysts/appointments/${appointment_id}`, {
         status,
+        service_start_date: startDate,
+        service_frequency: frequency,
       });
       setButtonLoading(false);
       toast.success('Solicitaçao atualizda com sucesso!');
@@ -153,180 +113,28 @@ function AppointmentsRead() {
       setButtonLoading(false);
     }
   };
+  console.log({ appointment });
 
   return (
     <Container>
-      <h2>Visualização de Solicitação</h2>
+      <Title>
+        <h2>Visualização de Solicitação</h2>
 
-      {!loading && (
+        <ButtonContainer>
+          <Button
+            type="primary"
+            style={{ background: '#40d4c3' }}
+            width={320}
+            onClick={() => setIsModalManualAppointmentOpen(true)}
+          >
+            Agendamento manual
+          </Button>
+        </ButtonContainer>
+      </Title>
+
+      {!loading && appointment && (
         <>
-          <BoxVisualization>
-            <Formik initialValues={initialValues}>
-              {() => (
-                <Form>
-                  <h3>Informação do Paciente</h3>
-                  {!!familyMembersState.length &&
-                    familyMembersState.map((f, index) => (
-                      <Row>
-                        <Column>
-                          <label htmlFor={`member_name_${index}`}>Nome</label>
-                          <Field
-                            id={`member_name_${index}`}
-                            name={`member_name_${index}`}
-                            placeholder="Nome"
-                            disabled
-                          />
-                        </Column>
-
-                        <Column>
-                          <label htmlFor={`member_email_${index}`}>
-                            E-mail
-                          </label>
-                          <Field
-                            id={`member_email_${index}`}
-                            name={`member_email_${index}`}
-                            placeholder="E-mail"
-                            disabled
-                          />
-                        </Column>
-                        <Column>
-                          <label htmlFor={`member_birthday_${index}`}>
-                            Data de nascimento
-                          </label>
-                          <Field
-                            id={`member_birthday_${index}`}
-                            name={`member_birthday_${index}`}
-                            placeholder="Data de nascimento"
-                            disabled
-                          />
-                        </Column>
-                        <Column>
-                          <label htmlFor={`member_kinship_${index}`}>
-                            Grau de parentesco
-                          </label>
-                          <Field
-                            id={`member_kinship_${index}`}
-                            name={`member_kinship_${index}`}
-                            placeholder="Parente"
-                            disabled
-                          />
-                        </Column>
-                      </Row>
-                    ))}
-
-                  {!familyMembersState.length && (
-                    <Row>
-                      <Column>
-                        <label htmlFor="patient_name">Nome</label>
-                        <Field
-                          id="patient_name"
-                          name="patient_name"
-                          placeholder="Nome"
-                          disabled
-                        />
-                      </Column>
-
-                      <Column>
-                        <label htmlFor="patient_email">E-mail</label>
-                        <Field
-                          id="patient_email"
-                          name="patient_email"
-                          placeholder="E-mail"
-                          disabled
-                        />
-                      </Column>
-                    </Row>
-                  )}
-
-                  <h3>Preferências do Atendimento</h3>
-                  <Row>
-                    <Column>
-                      <label htmlFor="shift">Periodo</label>
-                      <Field id="shift" name="shift" disabled />
-                    </Column>
-
-                    <Column>
-                      <label htmlFor="preference_analyst_sex">
-                        Sexo do Analísta
-                      </label>
-                      <Field
-                        id="preference_analyst_sex"
-                        name="preference_analyst_sex"
-                        disabled
-                      />
-                    </Column>
-
-                    <Column>
-                      <label htmlFor="preference_service_modality">
-                        Modalidade de Atendimento
-                      </label>
-                      <Field
-                        id="preference_service_modality"
-                        name="preference_service_modality"
-                        disabled
-                      />
-                    </Column>
-
-                    <Column>
-                      <label htmlFor="preference_district">Região</label>
-                      <Field
-                        id="preference_district"
-                        name="preference_district"
-                        disabled
-                      />
-                    </Column>
-
-                    <Column>
-                      <label htmlFor="preference_service_type">
-                        Tipos de atendimento
-                      </label>
-                      <Field
-                        id="preference_service_type"
-                        name="preference_service_type"
-                        disabled
-                      />
-                    </Column>
-                  </Row>
-
-                  {analyst && (
-                    <>
-                      <h3>Informação do Analista</h3>
-
-                      <Row>
-                        <Column>
-                          <label htmlFor="analyst_name">Nome</label>
-                          <Field
-                            id="analyst_name"
-                            name="analyst_name"
-                            disabled
-                          />
-                        </Column>
-                        <Column>
-                          <label htmlFor="analyst_email">E-mail</label>
-                          <Field
-                            id="analyst_email"
-                            name="analyst_email"
-                            disabled
-                          />
-                        </Column>
-                      </Row>
-                    </>
-                  )}
-                  <Row />
-                </Form>
-              )}
-            </Formik>
-
-            <ButtonContainer>
-              <Button
-                color="#40d4c3"
-                width={320}
-                onClick={() => setIsModalManualAppointmentOpen(true)}
-              >
-                Agendamento manual
-              </Button>
-            </ButtonContainer>
-          </BoxVisualization>
+          <AppointmentInfo appointment={appointment} />
 
           <BoxVisualization>
             <h3>Status da Solicitação</h3>
@@ -349,6 +157,31 @@ function AppointmentsRead() {
               </ANTDSelect>
             </Row>
 
+            {status === 'interviewed' && (
+              <InfoExtra>
+                <DateInputBox>
+                  <label htmlFor="startDate">Data Inicial</label>
+                  <ReactDatePicker
+                    id="startDate"
+                    selected={startDate}
+                    onChange={(date) => setStartDate(date)}
+                    locale="pt"
+                    dateFormat="dd/MM/yyyy"
+                  />
+                </DateInputBox>
+
+                <Fild>
+                  <label htmlFor="periocidade">Periocidade</label>
+                  <input
+                    type="text"
+                    value={frequency}
+                    placeholder="Periocidade"
+                    onChange={(event) => setFrequency(event.target.value)}
+                  />
+                </Fild>
+              </InfoExtra>
+            )}
+
             <Row>
               <ul>
                 <li>Pendente: Solicitação foi criada</li>
@@ -364,10 +197,10 @@ function AppointmentsRead() {
             </Row>
 
             <Button
+              type="primary"
               className="button"
               width={250}
-              type="button"
-              color="#40d4c3"
+              style={{ background: '#40d4c3' }}
               onClick={changeAppointmentStatus}
               loading={buttonLoading}
             >

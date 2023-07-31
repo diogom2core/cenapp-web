@@ -3,17 +3,11 @@ import styled from 'styled-components';
 export const Container = styled.div`
   height: 100%;
   margin-top: 35px;
-  max-width: 900px;
+  max-width: 1600px;
   width: 100%;
   margin-left: 70px;
   margin-right: 70px;
   padding-bottom: 120px;
-
-  h2 {
-    color: #111;
-    font-weight: 600;
-    font-size: 22px;
-  }
 
   @keyframes fadeIn {
     0% {
@@ -29,12 +23,11 @@ export const Container = styled.div`
 
 export const BoxVisualization = styled.div`
   width: 100%;
-  max-width: 850px;
   margin: 40px auto 0 auto;
   border-radius: 8px;
   padding: 30px;
   background: #fff;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
 
   .ant-select-selector {
     background: #ececec !important;
@@ -132,52 +125,6 @@ export const Row = styled.div`
   justify-content: space-between;
 `;
 
-export const Column = styled.div`
-  width: 31.33%;
-  padding: 0 1%;
-  margin-bottom: 30px;
-
-  .ant-select-selector {
-    background: #ececec !important;
-    color: #959595 !important;
-    display: flex;
-    align-items: center;
-    height: 37px;
-
-    span {
-      color: #292828;
-    }
-  }
-
-  label {
-    display: block;
-    text-align: left;
-    margin-bottom: 10px;
-    color: #292828;
-    font-weight: 500;
-  }
-
-  input {
-    border: none;
-    width: 100%;
-    height: 37px;
-    display: flex;
-    align-items: center;
-    background: #ececec;
-    border-radius: 4px;
-    padding: 12px;
-    font-size: 14px;
-  }
-  .ant-checkbox-group {
-    display: flex;
-    width: 100%;
-
-    label {
-      display: flex;
-    }
-  }
-`;
-
 export const ButtonContainer = styled.div`
   display: flex;
   align-items: center;
@@ -252,5 +199,96 @@ export const ModalConfirm = styled.div`
           0 1px 3px rgba(0, 0, 0, 0.08);
       }
     }
+  }
+`;
+
+export const Title = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 60px;
+
+  h2 {
+    color: #111;
+    font-weight: 500;
+    font-size: 24px;
+    margin: 0;
+  }
+`;
+
+export const DateInputBox = styled.div`
+  margin-right: 15px;
+  margin-top: 15px;
+
+  label {
+    margin-right: 10px;
+    font-size: 14px;
+  }
+
+  input {
+    min-width: 260px;
+    height: 38px;
+    background-color: #ffffff;
+    border: 1px solid rgb(217, 217, 217);
+    padding: 4px 15px;
+    border-radius: 6px;
+  }
+`;
+
+export const InfoExtra = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+`;
+
+export const Fild = styled.div`
+  margin-bottom: 30px;
+  margin-right: 40px;
+  min-width: 200px;
+  max-width: 200px;
+
+  margin-top: 20px;
+
+  @media (max-width: 500px) {
+    margin-right: 0;
+    width: 100%;
+  }
+
+  .ant-select-selector {
+    background: #ececec !important;
+    color: #959595 !important;
+    display: flex;
+    align-items: center;
+    height: 37px;
+  }
+
+  .ant-radio-group {
+    display: flex;
+  }
+
+  .ant-checkbox-group {
+    display: flex;
+    label {
+      display: flex;
+    }
+  }
+
+  label {
+    display: block;
+    text-align: left;
+    margin-bottom: 10px;
+    color: #959595;
+  }
+
+  input {
+    border: none;
+    width: 100%;
+    height: 37px;
+    display: flex;
+    align-items: center;
+    background: #ececec;
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 14px;
   }
 `;

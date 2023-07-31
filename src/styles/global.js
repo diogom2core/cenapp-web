@@ -1,6 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
-import 'antd/dist/antd.css';
+import 'antd/dist/reset.css';
 import 'react-day-picker/lib/style.css';
+import 'react-datepicker/dist/react-datepicker.css';
 
 export default createGlobalStyle`
 
@@ -21,8 +22,7 @@ export default createGlobalStyle`
 
 
   body, input, button {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 500;
+    font-family: 'Roboto', sans-serif;
   }
 
   button {
