@@ -38,7 +38,7 @@ const CheckboxGroup = Checkbox.Group;
 
 const filterCheckboxOptions = [
   {
-    label: 'Conhece membro da SENAPP',
+    label: 'Conhece membro da CENAPP',
     value: 'have_bond_spbsb',
   },
   {

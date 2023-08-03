@@ -51,7 +51,7 @@ export function AppointmentsTable({
       key: '6',
     },
     {
-      title: 'Conhece membro da SENAPP',
+      title: 'Conhece membro da CENAPP',
       dataIndex: 'have_bond_spbsb',
       key: '7',
     },
