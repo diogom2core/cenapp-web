@@ -22,12 +22,18 @@ export const Container = styled.div`
 `;
 
 export const BoxVisualization = styled.div`
+  display: flex;
+  justify-content: space-between;
   width: 100%;
   margin: 40px auto 0 auto;
   border-radius: 8px;
   padding: 30px;
   background: #fff;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+
+  > div {
+    width: 50%;
+  }
 
   .ant-select-selector {
     background: #ececec !important;

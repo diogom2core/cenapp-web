@@ -9,7 +9,6 @@ import { toast } from 'react-toastify';
 import ReactDatePicker, { registerLocale } from 'react-datepicker';
 
 import { pt } from 'date-fns/locale';
-import { parseISO } from 'date-fns';
 import {
   Container,
   BoxVisualization,
@@ -33,6 +32,7 @@ function AppointmentsRead() {
   useState(false);
 
   const [status, setStatus] = useState('');
+  const [serviceStatus, setServiceStatus] = useState('');
   const [buttonLoading, setButtonLoading] = useState(false);
   const history = useHistory();
 
@@ -43,8 +43,12 @@ function AppointmentsRead() {
     try {
       const response = await api.get(`/appointments/read/${appointment_id}`);
       setStatus(response.data.status);
-      setStartDate(parseISO(response.data.service_start_date));
+      setStartDate(
+        response.data.service_start_date &&
+          new Date(response.data.service_start_date),
+      );
       setFrequency(response.data.service_frequency);
+      setServiceStatus(response.data.service_status);
       setAppointment(response.data);
 
       setLoading(false);
@@ -65,6 +69,7 @@ function AppointmentsRead() {
         status,
         service_start_date: startDate,
         service_frequency: frequency,
+        service_status: serviceStatus,
       });
       setButtonLoading(false);
       toast.success('Solicitaçao atualizda com sucesso!');
@@ -74,7 +79,6 @@ function AppointmentsRead() {
       setButtonLoading(false);
     }
   };
-  console.log({ appointment });
 
   return (
     <Container>
@@ -87,75 +91,98 @@ function AppointmentsRead() {
           <AppointmentInfo appointment={appointment} />
 
           <BoxVisualization>
-            <h3>Status da Solicitação</h3>
-            <Row>
-              <ANTDSelect
-                id="statsu"
-                defaultValue={status}
-                style={{ width: 205 }}
-                onChange={(statusValue) => setStatus(statusValue)}
+            <div>
+              <h3>Status da Solicitação</h3>
+              <Row>
+                <ANTDSelect
+                  id="statsu"
+                  defaultValue={status}
+                  style={{ width: 205 }}
+                  onChange={(statusValue) => setStatus(statusValue)}
+                >
+                  <Option key="pedding">Pendente</Option>
+                  <Option key="scheduled">Agendado</Option>
+                  <Option key="canceled">Cancelado</Option>
+                </ANTDSelect>
+              </Row>
+
+              <Row>
+                <ul>
+                  <li>Pendente: Solicitação foi criada</li>
+                  <li>Agendado: Foi encontrado um analista para solicitação</li>
+                  <li>Cancelado: Paciente não procurou analista</li>
+                </ul>
+              </Row>
+
+              <Button
+                type="primary"
+                className="button"
+                width={250}
+                style={{ background: '#40d4c3' }}
+                onClick={changeAppointmentStatus}
+                loading={buttonLoading}
               >
-                <Option key="pedding">Pendente</Option>
-                <Option key="scheduled">Agendado</Option>
-                <Option key="canceled">Cancelado</Option>
-                <Option key="interviewed">Fez entrrevista</Option>
-                <Option key="not_interview">Não Fez entrrevista</Option>
-                <Option key="service_started">Iniciou atendimento</Option>
-                <Option key="not_service_started">
-                  Não Iniciou atendimento
-                </Option>
-              </ANTDSelect>
-            </Row>
+                Alterar Status
+              </Button>
+            </div>
 
-            {status === 'interviewed' && (
-              <InfoExtra>
-                <DateInputBox>
-                  <label htmlFor="startDate">Data Inicial</label>
-                  <ReactDatePicker
-                    id="startDate"
-                    selected={startDate}
-                    onChange={(date) => setStartDate(date)}
-                    locale="pt"
-                    dateFormat="dd/MM/yyyy"
-                  />
-                </DateInputBox>
+            <div>
+              <h3>Status de Encaminhamento</h3>
 
-                <Fild>
-                  <label htmlFor="periocidade">Periocidade</label>
-                  <input
-                    type="text"
-                    value={frequency}
-                    placeholder="Periocidade"
-                    onChange={(event) => setFrequency(event.target.value)}
-                  />
-                </Fild>
-              </InfoExtra>
-            )}
+              <Row>
+                <ANTDSelect
+                  id="statsu"
+                  defaultValue={serviceStatus}
+                  style={{ width: 305 }}
+                  onChange={(statusValue) => setServiceStatus(statusValue)}
+                >
+                  <Option key="not_seek_analyst">Não procurou analista</Option>
+                  <Option key="did_interview">Fez a entrevista</Option>
+                  <Option key="did_interview_and_started_service">
+                    Fez a entrevista e iniciou o atendimento
+                  </Option>
+                  <Option key="did_interview_and_not_started_service">
+                    Fez a entrevista mas não inciou o atendimento
+                  </Option>
+                </ANTDSelect>
+              </Row>
 
-            <Row>
-              <ul>
-                <li>Pendente: Solicitação foi criada</li>
-                <li>Agendado: Foi encontrado um analista para solicitação</li>
-                <li>Cancelado: Paciente não procurou analista</li>
-                <li>Fez entrevista: Paciente fez a entrevista</li>
-                <li>Não Fez entrevista: Paciente não fez a entrevista</li>
-                <li>Iniciou atendimento: Paciente iniciou o atendimento</li>
-                <li>
-                  Não Iniciou atendimento: Paciente não iniciou o atendimento
-                </li>
-              </ul>
-            </Row>
+              {serviceStatus === 'did_interview_and_started_service' && (
+                <InfoExtra>
+                  <DateInputBox>
+                    <label htmlFor="startDate">Data Inicial</label>
+                    <ReactDatePicker
+                      id="startDate"
+                      selected={startDate}
+                      onChange={(date) => setStartDate(date)}
+                      locale="pt"
+                      dateFormat="dd/MM/yyyy"
+                    />
+                  </DateInputBox>
 
-            <Button
-              type="primary"
-              className="button"
-              width={250}
-              style={{ background: '#40d4c3' }}
-              onClick={changeAppointmentStatus}
-              loading={buttonLoading}
-            >
-              Alterar Status
-            </Button>
+                  <Fild>
+                    <label htmlFor="periocidade">Periocidade</label>
+                    <input
+                      type="text"
+                      value={frequency}
+                      placeholder="Periocidade"
+                      onChange={(event) => setFrequency(event.target.value)}
+                    />
+                  </Fild>
+                </InfoExtra>
+              )}
+
+              <Button
+                type="primary"
+                className="button"
+                width={250}
+                style={{ background: '#40d4c3' }}
+                onClick={changeAppointmentStatus}
+                loading={buttonLoading}
+              >
+                Alterar Status
+              </Button>
+            </div>
           </BoxVisualization>
         </>
       )}
