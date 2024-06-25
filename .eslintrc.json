@@ -24,6 +24,7 @@
       "prettier"
   ],
   "rules": {
+    "jsx-a11y/control-has-associated-label": "off",
     "jsx-a11y/no-noninteractive-element-interactions": "off",
     "implicit-arrow-linebreak": "off",
     "camelcase": "off",
